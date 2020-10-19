@@ -28,3 +28,9 @@ C:\Users\Raymond\source\repos\Smash\SmashLabs\obj\Debug\SmashLabs.csproj.CoreCom
 C:\Users\Raymond\source\repos\Smash\SmashLabs\obj\Debug\SmashLabs.dll
 C:\Users\Raymond\source\repos\Smash\SmashLabs\obj\Debug\SmashLabs.pdb
 C:\Users\Raymond\source\repos\Smash\SmashLabs\obj\Debug\SmashLabs.csprojAssemblyReference.cache
+E:\Programming\Smash\SmashLabs\bin\Debug\SmashLabs.dll
+E:\Programming\Smash\SmashLabs\bin\Debug\SmashLabs.pdb
+E:\Programming\Smash\SmashLabs\obj\Debug\SmashLabs.csprojAssemblyReference.cache
+E:\Programming\Smash\SmashLabs\obj\Debug\SmashLabs.csproj.CoreCompileInputs.cache
+E:\Programming\Smash\SmashLabs\obj\Debug\SmashLabs.dll
+E:\Programming\Smash\SmashLabs\obj\Debug\SmashLabs.pdb

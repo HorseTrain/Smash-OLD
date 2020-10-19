@@ -18,3 +18,13 @@ C:\Users\Raymond\source\repos\Smash\SimpleGameEngine\obj\Debug\SimpleGameEngine.
 C:\Users\Raymond\source\repos\Smash\SimpleGameEngine\obj\Debug\SimpleGameEngine.csprojAssemblyReference.cache
 C:\Users\Raymond\source\repos\Smash\SimpleGameEngine\bin\Debug\SimpleGameEngine.dll
 C:\Users\Raymond\source\repos\Smash\SimpleGameEngine\obj\Debug\SimpleGameEngine.dll
+E:\Programming\Smash\SimpleGameEngine\bin\Debug\SimpleGameEngine.dll
+E:\Programming\Smash\SimpleGameEngine\bin\Debug\SimpleGameEngine.pdb
+E:\Programming\Smash\SimpleGameEngine\bin\Debug\OpenTK.dll
+E:\Programming\Smash\SimpleGameEngine\bin\Debug\OpenTK.pdb
+E:\Programming\Smash\SimpleGameEngine\bin\Debug\OpenTK.xml
+E:\Programming\Smash\SimpleGameEngine\obj\Debug\SimpleGameEngine.csprojAssemblyReference.cache
+E:\Programming\Smash\SimpleGameEngine\obj\Debug\SimpleGameEngine.csproj.CoreCompileInputs.cache
+E:\Programming\Smash\SimpleGameEngine\obj\Debug\SimpleGameEngine.csproj.CopyComplete
+E:\Programming\Smash\SimpleGameEngine\obj\Debug\SimpleGameEngine.dll
+E:\Programming\Smash\SimpleGameEngine\obj\Debug\SimpleGameEngine.pdb
