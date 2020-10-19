@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "tRiHLU0qgbPd7T3Q6vF6fEMTNzTVAHsFonYXlYr1KLvA03RHyGrfcPEHnb/edWRaQ+OLqrhxVfpVZwSSap4EbA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Raymond\\source\\repos\\Smash\\Smash\\Smash.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Raymond\\.nuget\\packages\\ilmerge\\3.0.29\\ilmerge.3.0.29.nupkg.sha512"
+  ],
+  "logs": []
+}

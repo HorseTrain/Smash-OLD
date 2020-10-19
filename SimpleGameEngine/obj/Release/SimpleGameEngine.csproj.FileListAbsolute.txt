@@ -1,0 +1,10 @@
+C:\Users\Raymond\source\repos\Smash\SimpleGameEngine\bin\Release\SimpleGameEngine.dll
+C:\Users\Raymond\source\repos\Smash\SimpleGameEngine\bin\Release\SimpleGameEngine.pdb
+C:\Users\Raymond\source\repos\Smash\SimpleGameEngine\bin\Release\OpenTK.dll
+C:\Users\Raymond\source\repos\Smash\SimpleGameEngine\bin\Release\OpenTK.pdb
+C:\Users\Raymond\source\repos\Smash\SimpleGameEngine\bin\Release\OpenTK.xml
+C:\Users\Raymond\source\repos\Smash\SimpleGameEngine\obj\Release\SimpleGameEngine.csproj.CoreCompileInputs.cache
+C:\Users\Raymond\source\repos\Smash\SimpleGameEngine\obj\Release\SimpleGameEngine.csproj.CopyComplete
+C:\Users\Raymond\source\repos\Smash\SimpleGameEngine\obj\Release\SimpleGameEngine.dll
+C:\Users\Raymond\source\repos\Smash\SimpleGameEngine\obj\Release\SimpleGameEngine.pdb
+C:\Users\Raymond\source\repos\Smash\SimpleGameEngine\obj\Release\SimpleGameEngine.csprojAssemblyReference.cache

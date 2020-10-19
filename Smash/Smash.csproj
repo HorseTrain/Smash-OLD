@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CF17CDE5-5A0B-496C-BD59-53DAF1C803E0}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Smash</RootNamespace>
+    <AssemblyName>Smash</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Obf|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Final|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Final\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="OpenTK, Version=3.2.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.3.2\lib\net20\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Game\Fighter\fighter.cs" />
+    <Compile Include="Game\Fighter\FighterPeram.cs" />
+    <Compile Include="Game\Fighter\fighter_attack.cs" />
+    <Compile Include="Game\Fighter\fighter_damage.cs" />
+    <Compile Include="Game\Fighter\fighter_draw.cs" />
+    <Compile Include="Game\Fighter\fighter_generic.cs" />
+    <Compile Include="Game\Fighter\fighter_scripts.cs" />
+    <Compile Include="Game\Input\ControllerAxis.cs" />
+    <Compile Include="Game\Input\FighterInput.cs" />
+    <Compile Include="Game\Input\JoystickInput.cs" />
+    <Compile Include="Game\Input\KeyboardController.cs" />
+    <Compile Include="Game\Interaction\Hitbox.cs" />
+    <Compile Include="Game\Physics\Structs\Circle.cs" />
+    <Compile Include="Game\Physics\Structs\Line2D.cs" />
+    <Compile Include="Game\Physics\Structs\LineIntersection2D.cs" />
+    <Compile Include="Game\Physics\Structs\Quad.cs" />
+    <Compile Include="Game\Scene.cs" />
+    <Compile Include="Game\SceneAssets\Stage.cs" />
+    <Compile Include="Game\SceneObject.cs" />
+    <Compile Include="Game\Scenes\ArenaScenes.cs" />
+    <Compile Include="Game\Physics\SimplePhysics.cs" />
+    <Compile Include="Game\Scenes\Ledge.cs" />
+    <Compile Include="Game\Scenes\MatLabs.cs" />
+    <Compile Include="Game\SmashMath.cs" />
+    <Compile Include="Game\UI\Button.cs" />
+    <Compile Include="Game\UI\MenuScene.cs" />
+    <Compile Include="Game\XMLParsable.cs" />
+    <Compile Include="GraphicWrangler\Animator.cs" />
+    <Compile Include="GraphicWrangler\GeomatryRenderer2D.cs" />
+    <Compile Include="GraphicWrangler\IRenderable.cs" />
+    <Compile Include="GraphicWrangler\MaterialObjects\ParamDataType.cs" />
+    <Compile Include="GraphicWrangler\MaterialObjects\ParamID.cs" />
+    <Compile Include="GraphicWrangler\Particals\TrailParticalRenderer.cs" />
+    <Compile Include="GraphicWrangler\RenderModel.cs" />
+    <Compile Include="GraphicWrangler\Shape.cs" />
+    <Compile Include="GraphicWrangler\ShapeRenderer.cs" />
+    <Compile Include="GraphicWrangler\SkinnedMeshRenderer.cs" />
+    <Compile Include="GraphicWrangler\SkyboxRenderer.cs" />
+    <Compile Include="GraphicWrangler\SmashMaterial.cs" />
+    <Compile Include="GraphicWrangler\SmashWindow.cs" />
+    <Compile Include="IO\FileLoader.cs" />
+    <Compile Include="IO\Parsers.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="OpenTK.dll.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Exporter\Exporter.csproj">
+      <Project>{3abc7fef-50bf-4503-a54b-4f3fe5fcfa09}</Project>
+      <Name>Exporter</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SimpleGameEngine\SimpleGameEngine.csproj">
+      <Project>{118f5bc3-c97b-4f76-aa68-e425642c440c}</Project>
+      <Name>SimpleGameEngine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SmashLabs\SmashLabs.csproj">
+      <Project>{35664f18-b90d-46ee-989c-1e0e1824b314}</Project>
+      <Name>SmashLabs</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

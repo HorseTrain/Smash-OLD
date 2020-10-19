@@ -1,0 +1,203 @@
+{
+  "version": 3,
+  "targets": {
+    ".NETFramework,Version=v4.7.2": {
+      "ILMerge/3.0.29": {
+        "type": "package",
+        "build": {
+          "build/ILMerge.props": {}
+        }
+      },
+      "SimpleGameEngine/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/SimpleGameEngine.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SimpleGameEngine.dll": {}
+        }
+      },
+      "SmashLabs/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/SmashLabs.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SmashLabs.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.7.2/win": {
+      "ILMerge/3.0.29": {
+        "type": "package",
+        "build": {
+          "build/ILMerge.props": {}
+        }
+      },
+      "SimpleGameEngine/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/SimpleGameEngine.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SimpleGameEngine.dll": {}
+        }
+      },
+      "SmashLabs/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/SmashLabs.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SmashLabs.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.7.2/win-x64": {
+      "ILMerge/3.0.29": {
+        "type": "package",
+        "build": {
+          "build/ILMerge.props": {}
+        }
+      },
+      "SimpleGameEngine/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/SimpleGameEngine.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SimpleGameEngine.dll": {}
+        }
+      },
+      "SmashLabs/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/SmashLabs.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SmashLabs.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.7.2/win-x86": {
+      "ILMerge/3.0.29": {
+        "type": "package",
+        "build": {
+          "build/ILMerge.props": {}
+        }
+      },
+      "SimpleGameEngine/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/SimpleGameEngine.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SimpleGameEngine.dll": {}
+        }
+      },
+      "SmashLabs/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/SmashLabs.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SmashLabs.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "ILMerge/3.0.29": {
+      "sha512": "+LXIFY4L84Ve3cVgmd8tOEwFCppJynP0gY2cTmyj/8XjFaQPqaiN6jdYOrIJwtzYw3ayf69IY5vor6XXRxoigA==",
+      "type": "package",
+      "path": "ilmerge/3.0.29",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "build/ILMerge.props",
+        "docs/ilmerge-manual.md",
+        "ilmerge.3.0.29.nupkg.sha512",
+        "ilmerge.nuspec",
+        "tools/net452/ILMerge.exe",
+        "tools/net452/System.Compiler.dll"
+      ]
+    },
+    "SimpleGameEngine/1.0.0": {
+      "type": "project",
+      "path": "../SimpleGameEngine/SimpleGameEngine.csproj",
+      "msbuildProject": "../SimpleGameEngine/SimpleGameEngine.csproj"
+    },
+    "SmashLabs/1.0.0": {
+      "type": "project",
+      "path": "../../../../Desktop/SmashLabs/SmashLabs-master/SmashLabs/SmashLabs.csproj",
+      "msbuildProject": "../../../../Desktop/SmashLabs/SmashLabs-master/SmashLabs/SmashLabs.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    ".NETFramework,Version=v4.7.2": [
+      "ILMerge >= 3.0.29",
+      "SimpleGameEngine >= 1.0.0",
+      "SmashLabs >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\Raymond\\.nuget\\packages\\": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Users\\Raymond\\source\\repos\\Smash\\Smash\\Smash.csproj",
+      "projectName": "Smash",
+      "projectPath": "C:\\Users\\Raymond\\source\\repos\\Smash\\Smash\\Smash.csproj",
+      "packagesPath": "C:\\Users\\Raymond\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Raymond\\source\\repos\\Smash\\Smash\\obj\\",
+      "projectStyle": "PackageReference",
+      "skipContentFileWrite": true,
+      "configFilePaths": [
+        "C:\\Users\\Raymond\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net472"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net472": {
+          "projectReferences": {
+            "C:\\Users\\Raymond\\Desktop\\SmashLabs\\SmashLabs-master\\SmashLabs\\SmashLabs.csproj": {
+              "projectPath": "C:\\Users\\Raymond\\Desktop\\SmashLabs\\SmashLabs-master\\SmashLabs\\SmashLabs.csproj"
+            },
+            "C:\\Users\\Raymond\\source\\repos\\Smash\\SimpleGameEngine\\SimpleGameEngine.csproj": {
+              "projectPath": "C:\\Users\\Raymond\\source\\repos\\Smash\\SimpleGameEngine\\SimpleGameEngine.csproj"
+            }
+          }
+        }
+      }
+    },
+    "frameworks": {
+      "net472": {
+        "dependencies": {
+          "ILMerge": {
+            "target": "Package",
+            "version": "[3.0.29, )"
+          }
+        }
+      }
+    },
+    "runtimes": {
+      "win": {
+        "#import": []
+      },
+      "win-x64": {
+        "#import": []
+      },
+      "win-x86": {
+        "#import": []
+      }
+    }
+  }
+}
