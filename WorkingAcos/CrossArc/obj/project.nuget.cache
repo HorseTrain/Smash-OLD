@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "MaVHvZDu4oirogTFwSs8rjIaj2MF9+Oqi2qKP/yVqJfRm98MLmQc4pdNA+a9KaYynr/MORUIJCViI3g6XdS7SQ==",
+  "success": true,
+  "projectFilePath": "D:\\Programming\\WorkingAcos\\CrossArc\\CrossArc.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Raymond\\.nuget\\packages\\system.buffers\\4.5.0\\system.buffers.4.5.0.nupkg.sha512",
+    "C:\\Users\\Raymond\\.nuget\\packages\\zstandard.net\\1.1.7\\zstandard.net.1.1.7.nupkg.sha512"
+  ],
+  "logs": []
+}

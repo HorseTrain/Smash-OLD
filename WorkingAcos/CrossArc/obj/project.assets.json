@@ -1,0 +1,280 @@
+{
+  "version": 3,
+  "targets": {
+    ".NETFramework,Version=v4.7.2": {
+      "System.Buffers/4.5.0": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "mscorlib"
+        ],
+        "compile": {
+          "ref/net45/System.Buffers.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Buffers.dll": {}
+        }
+      },
+      "Zstandard.Net/1.1.7": {
+        "type": "package",
+        "dependencies": {
+          "System.Buffers": "4.5.0"
+        },
+        "compile": {
+          "lib/net45/Zstandard.Net.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Zstandard.Net.dll": {}
+        },
+        "build": {
+          "build/_._": {}
+        }
+      },
+      "ArcCross/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.0",
+        "dependencies": {
+          "Zstandard.Net": "1.1.7"
+        },
+        "compile": {
+          "bin/placeholder/ArcCross.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ArcCross.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.7.2/win": {
+      "System.Buffers/4.5.0": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "mscorlib"
+        ],
+        "compile": {
+          "ref/net45/System.Buffers.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Buffers.dll": {}
+        }
+      },
+      "Zstandard.Net/1.1.7": {
+        "type": "package",
+        "dependencies": {
+          "System.Buffers": "4.5.0"
+        },
+        "compile": {
+          "lib/net45/Zstandard.Net.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Zstandard.Net.dll": {}
+        },
+        "build": {
+          "build/_._": {}
+        }
+      },
+      "ArcCross/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.0",
+        "dependencies": {
+          "Zstandard.Net": "1.1.7"
+        },
+        "compile": {
+          "bin/placeholder/ArcCross.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ArcCross.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.7.2/win-x64": {
+      "System.Buffers/4.5.0": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "mscorlib"
+        ],
+        "compile": {
+          "ref/net45/System.Buffers.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Buffers.dll": {}
+        }
+      },
+      "Zstandard.Net/1.1.7": {
+        "type": "package",
+        "dependencies": {
+          "System.Buffers": "4.5.0"
+        },
+        "compile": {
+          "lib/net45/Zstandard.Net.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Zstandard.Net.dll": {}
+        },
+        "build": {
+          "build/_._": {}
+        }
+      },
+      "ArcCross/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.0",
+        "dependencies": {
+          "Zstandard.Net": "1.1.7"
+        },
+        "compile": {
+          "bin/placeholder/ArcCross.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ArcCross.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.7.2/win-x86": {
+      "System.Buffers/4.5.0": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "mscorlib"
+        ],
+        "compile": {
+          "ref/net45/System.Buffers.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Buffers.dll": {}
+        }
+      },
+      "Zstandard.Net/1.1.7": {
+        "type": "package",
+        "dependencies": {
+          "System.Buffers": "4.5.0"
+        },
+        "compile": {
+          "lib/net45/Zstandard.Net.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Zstandard.Net.dll": {}
+        },
+        "build": {
+          "build/_._": {}
+        }
+      },
+      "ArcCross/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.0",
+        "dependencies": {
+          "Zstandard.Net": "1.1.7"
+        },
+        "compile": {
+          "bin/placeholder/ArcCross.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ArcCross.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "System.Buffers/4.5.0": {
+      "sha512": "pL2ChpaRRWI/p4LXyy4RgeWlYF2sgfj/pnVMvBqwNFr5cXg7CXNnWZWxrOONLg8VGdFB8oB+EG2Qw4MLgTOe+A==",
+      "type": "package",
+      "path": "system.buffers/4.5.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/netcoreapp2.0/_._",
+        "lib/netstandard1.1/System.Buffers.dll",
+        "lib/netstandard1.1/System.Buffers.xml",
+        "lib/netstandard2.0/System.Buffers.dll",
+        "lib/netstandard2.0/System.Buffers.xml",
+        "lib/uap10.0.16299/_._",
+        "ref/net45/System.Buffers.dll",
+        "ref/net45/System.Buffers.xml",
+        "ref/netcoreapp2.0/_._",
+        "ref/netstandard1.1/System.Buffers.dll",
+        "ref/netstandard1.1/System.Buffers.xml",
+        "ref/netstandard2.0/System.Buffers.dll",
+        "ref/netstandard2.0/System.Buffers.xml",
+        "ref/uap10.0.16299/_._",
+        "system.buffers.4.5.0.nupkg.sha512",
+        "system.buffers.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
+    "Zstandard.Net/1.1.7": {
+      "sha512": "jzFW0nUyaXaOPYrNMF7RIYdFNzp7ebiiv8otX1JxaLHnkP3bqTCYDIU5Mvvwo4+56QF3/vRJkldhMoKUDVbJig==",
+      "type": "package",
+      "path": "zstandard.net/1.1.7",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "build/LICENSE",
+        "build/Zstandard.Net.targets",
+        "build/x64/libzstd.dll",
+        "build/x86/libzstd.dll",
+        "lib/net45/Zstandard.Net.dll",
+        "lib/netstandard2.0/Zstandard.Net.dll",
+        "zstandard.net.1.1.7.nupkg.sha512",
+        "zstandard.net.nuspec"
+      ]
+    },
+    "ArcCross/1.0.0": {
+      "type": "project",
+      "path": "../ArcCross/ArcCross.csproj",
+      "msbuildProject": "../ArcCross/ArcCross.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    ".NETFramework,Version=v4.7.2": [
+      "ArcCross >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\Raymond\\.nuget\\packages\\": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "D:\\Programming\\WorkingAcos\\CrossArc\\CrossArc.csproj",
+      "projectName": "CrossArc",
+      "projectPath": "D:\\Programming\\WorkingAcos\\CrossArc\\CrossArc.csproj",
+      "packagesPath": "C:\\Users\\Raymond\\.nuget\\packages\\",
+      "outputPath": "D:\\Programming\\WorkingAcos\\CrossArc\\obj\\",
+      "projectStyle": "PackageReference",
+      "skipContentFileWrite": true,
+      "configFilePaths": [
+        "C:\\Users\\Raymond\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net472"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net472": {
+          "projectReferences": {
+            "D:\\Programming\\WorkingAcos\\ArcCross\\ArcCross.csproj": {
+              "projectPath": "D:\\Programming\\WorkingAcos\\ArcCross\\ArcCross.csproj"
+            }
+          }
+        }
+      }
+    },
+    "frameworks": {
+      "net472": {}
+    },
+    "runtimes": {
+      "win": {
+        "#import": []
+      },
+      "win-x64": {
+        "#import": []
+      },
+      "win-x86": {
+        "#import": []
+      }
+    }
+  }
+}

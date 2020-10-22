@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "RacOmzqMK8C8sBoInzCIH3qEiChtu6l9sIOgJNV7ZewqW9kRuEO3kAE/hW+KO6YDce0ZxDHpNrdB8eNZaL6wlQ==",
+  "success": true,
+  "projectFilePath": "D:\\Programming\\WorkingAcos\\ArcCross\\ArcCross.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Raymond\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\Raymond\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512",
+    "C:\\Users\\Raymond\\.nuget\\packages\\system.buffers\\4.5.0\\system.buffers.4.5.0.nupkg.sha512",
+    "C:\\Users\\Raymond\\.nuget\\packages\\zstandard.net\\1.1.7\\zstandard.net.1.1.7.nupkg.sha512"
+  ],
+  "logs": []
+}

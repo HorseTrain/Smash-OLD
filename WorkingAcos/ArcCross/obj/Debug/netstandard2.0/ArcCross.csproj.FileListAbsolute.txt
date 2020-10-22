@@ -1,0 +1,10 @@
+D:\Programming\WorkingAcos\ArcCross\bin\Debug\netstandard2.0\Hashes.txt
+D:\Programming\WorkingAcos\ArcCross\bin\Debug\netstandard2.0\x64\libzstd.dll
+D:\Programming\WorkingAcos\ArcCross\bin\Debug\netstandard2.0\x86\libzstd.dll
+D:\Programming\WorkingAcos\ArcCross\bin\Debug\netstandard2.0\ArcCross.deps.json
+D:\Programming\WorkingAcos\ArcCross\bin\Debug\netstandard2.0\ArcCross.dll
+D:\Programming\WorkingAcos\ArcCross\bin\Debug\netstandard2.0\ArcCross.pdb
+D:\Programming\WorkingAcos\ArcCross\obj\Debug\netstandard2.0\ArcCross.csprojAssemblyReference.cache
+D:\Programming\WorkingAcos\ArcCross\obj\Debug\netstandard2.0\ArcCross.csproj.CoreCompileInputs.cache
+D:\Programming\WorkingAcos\ArcCross\obj\Debug\netstandard2.0\ArcCross.dll
+D:\Programming\WorkingAcos\ArcCross\obj\Debug\netstandard2.0\ArcCross.pdb
