@@ -356,6 +356,9 @@ namespace Smash.Game.Fighter
 
             DetectDash();
 
+            if (input.Cdir == -Gdir)
+                Dash("turndash",true);
+
             DetectMoveFall("walk");
         }
 

@@ -14,7 +14,7 @@ namespace Smash
         {
             Exporter.Program.Main(null);
 
-            args = new string[] { "roy","donkey" };
+            args = new string[] { "mario","donkey" };
 
 
             new int();

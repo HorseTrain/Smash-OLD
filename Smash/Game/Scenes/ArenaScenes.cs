@@ -30,15 +30,13 @@ namespace Smash.Game.Scenes
 
         public List<fighter> Fighters = new List<fighter>();
         bool HasFighters => Fighters.Count != 0;
-        public CameraType cameraMode { get; set; } = CameraType.Perspective;
+        public CameraType cameraMode { get; set; } = CameraType.Orthotgraphics;
 
         public bool DebugCamera = false;
 
         public List<Ledge> Ledges { get; set; } = new List<Ledge>();
 
         Circle circle = new Circle(10);
-
-        Stage stage;
 
         public ArenaScene()
         {
@@ -70,8 +68,6 @@ namespace Smash.Game.Scenes
             Ledges.Add(new Ledge(Right, 1, 1));
 
             SceneObject.MaterialTesting = false;
-
-            stage = Stage.LoadModels("fe_shrine");
         }
 
         public override void Update()
@@ -112,8 +108,6 @@ namespace Smash.Game.Scenes
             SimplePhysics.TestCollision(circle,SimplePhysics.SceneGeomatry[0]);
 
             //circle.Draw();
-
-            stage.Draw();
         }
 
         float MinX;
