@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Smash.IO;
+using SimpleGameEngine.IO.Collada.Scene;
 
 namespace Smash.Game.Fighter
 {
@@ -25,6 +26,7 @@ namespace Smash.Game.Fighter
         public Ledge HeldLedge { get; set; }
         public bool HoldingLedge => HeldLedge != null;
         public XMLFile peramfile { get; set; }
+        public bool Caught { get; set; }
         public float FinalSpeed
         {
             get
@@ -51,9 +53,11 @@ namespace Smash.Game.Fighter
 
                 phy.Update();
 
-                if (!InHitStun)
+                if (!InHitStun && !Caught)
                 {
                     FighterGeneral();
+
+                    FighterCollision();
                 }
 
                 RunAnimationPerams();
@@ -65,16 +69,41 @@ namespace Smash.Game.Fighter
 
             DrawFighter();
 
-            anim.AnimationChange = false;
+            anim.AnimationChange = false;            
+        }
+
+        public void FighterCollision()
+        {
+            ArenaScene arenaScene = (ArenaScene)Scene.CurrentScene;
+
+            foreach (fighter f in arenaScene.Fighters)
+            {
+                if (f != this && f.setup)
+                {
+                    if (f.phy.CollisionCapsule.TestCollision(phy.CollisionCapsule))
+                    {
+                        if (f.phy.Transform.LocalPosition.X < phy.Transform.LocalPosition.X)
+                        {
+                            phy.MoveX(0.1f,2);
+                        }
+                        else
+                        {
+                            phy.MoveX(-0.1f, 2);
+                        }
+                    }
+                }
+            }
         }
 
         bool setup = false;
-        public void SetUp()
+        public virtual void SetUp()
         {
-            LoadPerams();
+            if (Peram == null)
             Peram = new FighterParam();
 
             phy = new SimplePhysics(skeleton.RootNode,Peram);
+
+            phy.FighterRef = this;
 
             setup = true;
 
@@ -86,6 +115,8 @@ namespace Smash.Game.Fighter
             {
                 anim.fighterref = this;
             }
+
+            phy.CollisionCapsule = new Physics.Shapes.Capsule2D(10,20);
         }
 
         public void LoadPerams()

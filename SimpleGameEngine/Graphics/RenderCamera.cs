@@ -1,5 +1,6 @@
 ﻿using OpenTK;
 using SimpleGameEngine.Graphics.Assets;
+using SimpleGameEngine.IO.Collada.Scene;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +26,8 @@ namespace SimpleGameEngine.Graphics
         public float CameraViewDistance { get; set; } = 10000;
 
         public Matrix4 CameraRotationMatrix => Matrix4.CreateFromQuaternion(CameraRotation);
-        public Matrix4 CameraViewMatrix => Matrix4.CreateTranslation(-CameraPosition) * CameraRotationMatrix;
+        public Matrix4 CameraPositionMatrix => Matrix4.CreateTranslation(-CameraPosition);
+        public Matrix4 CameraViewMatrix => CameraPositionMatrix * CameraRotationMatrix;
 
         public Vector3 CameraNormal => CameraRotationMatrix.Column2.Xyz;
 

@@ -1,10 +1,12 @@
 ﻿using OpenTK;
 using SimpleGameEngine.Graphics;
+using SimpleGameEngine.IO.Collada.Scene;
 using Smash.Game.Input;
 using Smash.Game.Interaction;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,20 +20,116 @@ namespace Smash.Game.Fighter
 
     public partial class fighter 
     {
-        public static float DamageFlyDrag = 10;
+        public static float DamageFlyDrag = 5;
         public bool InHitStun { get; private set; }
         public bool InDamageFly { get; set; }
         public Vector2 LaunchPosition { get; private set; }
         public float LaunchDistance { get; private set; }
         public float LaunchHeight { get; private set; }
         public float WantedLaunchDistance { get; private set; }
+        public LaunchMajor launchMajor { get; set; }
+        public Vector2 FlightPathPlugIn;
         float lp { get; set; }
+        public int LaunchDir;
+
+        public float HitLag { get; set; }
+        public bool InHitLag => HitLag > 0;
+
+        bool Grabbed = false;
+
+        public Hitbox hit;
+        Vector2 Point;
+
+        public fighter CFighter;
+
+        public static float GetDamageDistance(float Base)
+        {
+            return Base;
+        }
+
+        public static float FixAngle(float a)
+        {
+            if (a == 0)
+                return 0.001f;
+
+            return a;
+        }
+
+        public void Hit(Hitbox hit)
+        {
+            this.hit = hit;
+
+            if (hit.Type == HitboxType.Attack)
+            {
+                HitLag = hit.GetObject<int>("HitLag");
+
+                if (HitLag == 0)
+                    HitLag = 1;
+
+                Point = skeleton.RootNode.LocalPosition.Xy;
+
+                if (phy.Grounded)
+                {
+                    anim.CrossFade("damagen" + FighterRNG.Next(1, 4));
+                }
+                else
+                {
+                    anim.CrossFade("damageair" + FighterRNG.Next(1, 4));
+                }
+
+                hit.fRef.GeneralSpeed = 0;
+            }
+            else
+            {
+                Grabbed = true;
+
+                CFighter = hit.fRef;
+            }
+        }
 
         public virtual void DamageMain()
         {
-            if (input.KS.GetKeyPressed(OpenTK.Input.Key.Space) && FighterIndex == 0)
+            if (InHitLag)
             {
-                Launch(FighterRNG.Next(1,80),100);
+                HitLag -= FinalSpeed;
+
+                Vector3 temp = new Vector3(Point + new Vector2(FighterRNG.Next(-10,10)/10.0f, FighterRNG.Next(-10, 10) / 10.0f));
+
+                phy.Transform.LocalPosition = new Vector3(temp.X,phy.Transform.LocalPosition.Y, 0);
+
+                if (!phy.Grounded)
+                    phy.Transform.LocalPosition = new Vector3(phy.Transform.LocalPosition.X,temp.Y,0);
+
+                anim.CurrentKey = 2;
+
+                InHitStun = true;
+
+                if (HitLag < 0)
+                {
+                    skeleton.RootNode.LocalPosition = new Vector3(Point);
+
+                    float distance = GetDamageDistance(hit.GetObject<float>("KB"));
+
+                    if (distance < 5)
+                    {
+                        InHitStun = false;
+
+                        Vector2 attract = hit.Position - phy.Transform.LocalPosition.Xy;
+
+                        phy.Velocity.Y = 0;
+
+                        phy.MoveX(attract.X, 2);
+
+                        if (!hit.fRef.phy.Grounded)
+                        phy.MoveY(attract.Y, 2);
+                    }
+                    else
+                    {
+                        Launch(hit.GetObject<float>("Angle"), distance);
+                    }
+
+                    hit.fRef.GeneralSpeed = 1;
+                }
             }
 
             if (InDamageFly)
@@ -39,62 +137,43 @@ namespace Smash.Game.Fighter
                 DamageFlySlow();
             }
         }
-        
-        public LaunchMajor launchMajor { get; set; }
 
         public void Launch(float angle, float distance)
         {
-            Vector2 vel = GetDirection(MathHelper.DegreesToRadians(angle));
-            vel.X *= Gdir;
-
-            int Dir = FighterInput.GetDir(vel.X);
-
             if (angle == 0)
                 angle += 0.001f;
 
-            if (Math.Abs(vel.X) > 0.4f)
+            Vector2 vel = GetDirection(MathHelper.DegreesToRadians(angle));
+            vel.X *= hit.fRef.Gdir;
+
+            if (Math.Abs(vel.X) > 0.5f)
             {
-                if (Gdir == -Dir)
+                int ranim = FighterRNG.Next(0, 2);
+
+                switch (ranim)
                 {
-                    anim.CrossFade("damageflyn", 0, true);
-                }
-                else
-                {
-                    switch (FighterRNG.Next(0, 2))
-                    {
-                        case 0: anim.CrossFade("damageflyroll", 0, true); break;
-                        case 1: anim.CrossFade("damageflymeteor", 0, true); break;
-                    }
+                    case 0: anim.CrossFade("damageflyn"); break;
+                    case 1: anim.CrossFade("damageflyroll"); break;
                 }
             }
             else
             {
-                switch (FighterRNG.Next(0, 2))
+                if (vel.Y > 0)
                 {
-                    case 0: anim.CrossFade("damageflytop",0,true); break;
-                    case 1: anim.CrossFade("damageflymeteor", 0, true); break;
-                }              
+                    anim.CrossFade("damageflytop");
+                }
             }
 
-            if (Math.Abs(vel.X) > Math.Abs(vel.Y))
+            InDamageFly = true;
+
+            if (Math.Abs(FlightPathPlugIn.X) > Math.Abs(FlightPathPlugIn.Y))
                 launchMajor = LaunchMajor.MajorX;
             else
                 launchMajor = LaunchMajor.MajorY;
 
-            LaunchPosition = skeleton.RootNode.LocalPosition.Xy;
+            vel *= (distance / DamageFlyDrag);
 
-            WantedLaunchDistance = distance;
-
-            Vector2 direction = GetDirection(MathHelper.DegreesToRadians(angle)) * distance;
-            direction.X *= 2 * Gdir;
-
-            LaunchDistance = direction.X;
-            LaunchHeight = direction.Y;
-          
-            lp = 0;
-
-            InDamageFly = true;
-            InHitStun = true;
+            phy.Velocity = vel;
         }
 
         public Vector2 GetDirection(float angle)
@@ -102,44 +181,47 @@ namespace Smash.Game.Fighter
             return new Vector2((float)Math.Sin(angle), (float)Math.Cos(angle));
         }
 
+        public static float FlightPathPosition(float i,Vector2 FlightPathPlugIn)
+        {
+            return (float)Math.Sin((1/FlightPathPlugIn.X) * (.5f) * (i * Math.PI)) * FlightPathPlugIn.Y;
+        }
+
+        public Vector3 GetLaunchPosition(float i)
+        {
+            return (new Vector3(LaunchPosition) + new Vector3(i * LaunchDir, FlightPathPosition(i, FlightPathPlugIn), 0));
+        }
+
+        public bool DoneDamageFly => (launchMajor == LaunchMajor.MajorX && Math.Abs(phy.Velocity.X) < 0.5f) || (launchMajor == LaunchMajor.MajorY && Math.Abs(phy.Velocity.Y) < 0.5f);
+
         public void DamageFlySlow()
         {
-            lp += ((LaunchDistance/2) - lp) / (DamageFlyDrag / (float)Window.MainWindow.DeltaTime);
-
-            Vector2 DesiredPosition = new Vector3(LaunchPosition.X + lp, LaunchPosition.Y + SmashMath.TrajectoryParabola(lp, LaunchDistance, LaunchHeight), 0).Xy;
-
-            phy.Velocity = DesiredPosition - skeleton.RootNode.LocalPosition.Xy;
-
             phy.DoGravity = false;
 
-            if (lp / (LaunchDistance / 2) > 1 - (1/(DamageFlyDrag)))
+            phy.Velocity += (Vector2.Zero - phy.Velocity) / (DamageFlyDrag / FinalSpeed);
+
+            switch (anim.CurrentAnimationName)
             {
+                case "damageflyroll": DamageFlyTurn(phy.Velocity); break;
+                case "damageflyn": anim.PauseInAnimation(15); break;
+            }
+
+            if (DoneDamageFly)
+            {
+                if (anim.CurrentAnimationName == "damageflyroll")
+                {
+                    anim.CrossFade("damageflyrollend",20);
+                }
+
                 InDamageFly = false;
                 InHitStun = false;
-
-                switch (anim.CurrentAnimationName)
-                {
-                    case "damageflytop": anim.CrossFade("damagefall",100); break;
-                    case "damageflyn": anim.CrossFade("damagefall",100); break;
-                    case "damageflyroll": anim.CrossFade("damageflyrollend",100); break;
-                    case "damageflymeteor": anim.CrossFade("damagefall",100); break;
-                }
-            }
-            else
-            {
-                switch (anim.CurrentAnimationName)
-                {
-                    case "damageflyroll": DamageFlyTurn(); break;
-                    case "damageflymeteor": DamageFlyTurn(); break;
-                }
             }
         }
 
-        public void DamageFlyTurn(float offset = 0)
+        public void DamageFlyTurn(Vector2 dis, float offset = 0)
         {
-            float angle = (float)Math.Acos(Vector2.Dot(Vector2.UnitY,phy.Velocity / phy.Velocity.Length));
+            float angle = (float)Math.Acos(Vector2.Dot(Vector2.UnitY,dis.Normalized())) + MathHelper.RadiansToDegrees(offset);
 
-            skeleton.GetNode("Rot").LocalRotation = Quaternion.FromAxisAngle(new Vector3(1,0,0),angle * FighterInput.GetDir(phy.Velocity.X) * Gdir);
+            skeleton.GetNode("Rot").LocalRotation = Quaternion.FromAxisAngle(new Vector3(1,0,0),angle * FighterInput.GetDir(dis.X) * Gdir);
 
             anim.OverrideNode("Rot");
         }

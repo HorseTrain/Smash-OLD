@@ -94,8 +94,8 @@ namespace Smash.GraphicWrangler
 
                                 if (CurrentKeyIndex + 1 < currentanimation.FrameCount)
                                 {
-                                    MovementX = Keys.Item2.Position.Z - Keys.Item1.Position.Z;
-                                    MovementY = Keys.Item2.Position.Y - Keys.Item1.Position.Y;
+                                    MovementX = (Keys.Item2.Position.Z - Keys.Item1.Position.Z) * AnimationSpeed;
+                                    MovementY = (Keys.Item2.Position.Y - Keys.Item1.Position.Y) * AnimationSpeed;
                                 }
                             }
                         }
@@ -144,6 +144,8 @@ namespace Smash.GraphicWrangler
 
             if (CurrentKey < 0)
                 CurrentKey = 0;
+
+            AnimationSpeed = 1;
         }
 
         public static AnimationTransform LerpTransforms(AnimationTransform x,AnimationTransform y, float lerp)

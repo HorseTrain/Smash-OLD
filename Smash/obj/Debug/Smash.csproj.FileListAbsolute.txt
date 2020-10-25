@@ -83,3 +83,6 @@ D:\Programming\Smash\Smash\obj\Debug\Smash.csproj.CoreCompileInputs.cache
 D:\Programming\Smash\Smash\obj\Debug\Smash.csproj.CopyComplete
 D:\Programming\Smash\Smash\obj\Debug\Smash.exe
 D:\Programming\Smash\Smash\obj\Debug\Smash.pdb
+D:\Programming\Smash-Releases\Game\Smash.exe.config
+D:\Programming\Smash-Releases\Game\Smash.exe
+D:\Programming\Smash-Releases\Game\Smash.pdb

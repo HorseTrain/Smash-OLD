@@ -2206,13 +2206,15 @@ namespace Smash.Game.Fighter
             DetectMoveFall();
 
             DetectHitWall();
+
+            DetectCatch("catchdash");
         }
 
         public virtual void anm_run()
         {
             if (input.Cdir == 0)
             {
-                RunStopTimer += (float)Window.MainWindow.DeltaTime;
+                RunStopTimer += Window.MainWindow.GlobalDeltaTime;
 
                 if (RunStopTimer >= 3)
                 {
@@ -2232,6 +2234,8 @@ namespace Smash.Game.Fighter
             MoveInAnimation();
 
             DetectHitWall();
+
+            DetectCatch("catchdash");
         }
 
         public virtual void anm_runbrakel()
@@ -2276,6 +2280,8 @@ namespace Smash.Game.Fighter
             DetectMoveFall();
 
             DetectHitWall();
+
+            DetectCatch("catchdash",true);
         }
 
         public virtual void anm_turnrun()
@@ -2300,6 +2306,8 @@ namespace Smash.Game.Fighter
             TurnWhenDone();
 
             phy.HugLedge();
+
+            DetectCatch("catchturn");
         }
 
         public virtual void anm_turnrunbrake()
@@ -2310,6 +2318,8 @@ namespace Smash.Game.Fighter
                 anim.CrossFade("turn");
 
             phy.MoveX(0,5);
+
+            DetectCatch();
         }
 
         public virtual void anm_jumpaerialb()
@@ -2444,17 +2454,28 @@ namespace Smash.Game.Fighter
 
         public virtual void anm_squat()
         {
+            WhenFinishedGoTo("squatwait");
 
+            phy.MoveX(0, 10);
         }
 
         public virtual void anm_squatrv()
         {
+            DetectSquat();
 
+            WhenFinishedGoTo("wait1");
+
+            phy.MoveX(0, 10);
         }
 
         public virtual void anm_squatwait()
         {
+            if (input.Ydir.Value >= -0.5f)
+            {
+                anim.CrossFade("squatrv");
+            }
 
+            phy.MoveX(0,10);
         }
 
         public virtual void anm_squatwaititem()
@@ -2539,37 +2560,39 @@ namespace Smash.Game.Fighter
 
         public virtual void anm_attack100()
         {
+            InAttack = true;
 
+            GroundAttack();
         }
 
         public virtual void anm_attack100start()
         {
-
+            WhenFinishedGoTo("attack100");
         }
 
         public virtual void anm_attack11()
         {
-
+            GroundAttack();
         }
 
         public virtual void anm_attack12()
         {
-
+            GroundAttack();
         }
 
         public virtual void anm_attack13()
         {
-
+            GroundAttack();
         }
 
         public virtual void anm_attackdash()
         {
-
+            GroundAttack();
         }
 
         public virtual void anm_attackend()
         {
-
+            GroundAttack();
         }
 
         public virtual void anm_attacks3()
@@ -2589,12 +2612,12 @@ namespace Smash.Game.Fighter
 
         public virtual void anm_attackhi3()
         {
-
+            GroundAttack();
         }
 
         public virtual void anm_attacklw3()
         {
-
+            GroundAttack("squatwait");
         }
 
         public virtual void anm_attacks4charge()
@@ -2614,12 +2637,12 @@ namespace Smash.Game.Fighter
 
         public virtual void anm_attacks4s()
         {
-
+            GroundAttack();
         }
 
         public virtual void anm_attackhi4()
         {
-
+            GroundAttack();
         }
 
         public virtual void anm_attackhi4charge()
@@ -2629,7 +2652,7 @@ namespace Smash.Game.Fighter
 
         public virtual void anm_attacklw4()
         {
-
+            GroundAttack();
         }
 
         public virtual void anm_attacklw4charge()
@@ -2886,7 +2909,7 @@ namespace Smash.Game.Fighter
 
         public virtual void anm_catch()
         {
-
+            Catch();
         }
 
         public virtual void anm_catchattack()
@@ -2901,7 +2924,7 @@ namespace Smash.Game.Fighter
 
         public virtual void anm_catchdash()
         {
-
+            Catch();
         }
 
         public virtual void anm_catchpull()
@@ -2911,7 +2934,7 @@ namespace Smash.Game.Fighter
 
         public virtual void anm_catchturn()
         {
-
+            Catch(5,true);
         }
 
         public virtual void anm_catchwait()
@@ -3091,32 +3114,32 @@ namespace Smash.Game.Fighter
 
         public virtual void anm_damagen1()
         {
-
+            DamageN();
         }
 
         public virtual void anm_damagen2()
         {
-
+            DamageN();
         }
 
         public virtual void anm_damagen3()
         {
-
+            DamageN();
         }
 
         public virtual void anm_damageair1()
         {
-
+            DamageN();
         }
 
         public virtual void anm_damageair2()
         {
-
+            DamageN();
         }
 
         public virtual void anm_damageair3()
         {
-
+            DamageN();
         }
 
         public virtual void anm_damageflyhi()
@@ -3131,12 +3154,12 @@ namespace Smash.Game.Fighter
 
         public virtual void anm_damageflymeteor()
         {
-
+            WhenFinishedGoTo("damagefall",20);
         }
 
         public virtual void anm_damageflyn()
         {
-            WhenFinishedGoTo("damagefall");
+            WhenFinishedGoTo("damagefall",20);
         }
 
         public virtual void anm_damageflyroll()
@@ -3148,7 +3171,7 @@ namespace Smash.Game.Fighter
         {
             WhenFinishedGoTo("damagefall",100);
 
-            DamageFlyTurn();
+            DamageFlyTurn(phy.Velocity);
         }
 
         public virtual void anm_damageflytop()
@@ -4080,7 +4103,7 @@ namespace Smash.Game.Fighter
 
         public virtual void anm_attacks3s()
         {
-
+            GroundAttack();
         }
 
         public virtual void anm_specialairn1()
@@ -9315,7 +9338,7 @@ namespace Smash.Game.Fighter
 
         public virtual void anm_attack100end()
         {
-
+            GroundAttack();
         }
 
         public virtual void anm_attck100start()

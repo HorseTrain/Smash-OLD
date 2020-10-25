@@ -19,7 +19,10 @@ namespace SimpleGameEngine.Graphics
         private Stopwatch Time { get; set; }
         public long FrameRendertime { get; private set; } //In miliseconds
         public double FrameRate { get; private set; }
-        public double DeltaTime { get; private set; }
+        double DeltaTime { get; set; }
+
+        public float GlobalDeltaTime => (float)DeltaTime;
+
         public int TargetFramerate { get; set; } = 60;
         long WaitTime { get; set; }
         

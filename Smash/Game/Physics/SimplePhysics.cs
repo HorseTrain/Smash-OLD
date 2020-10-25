@@ -3,6 +3,7 @@ using SimpleGameEngine.Graphics;
 using SimpleGameEngine.Graphics.Assets;
 using SimpleGameEngine.Graphics.Structs;
 using Smash.Game.Fighter;
+using Smash.Game.Physics.Shapes;
 using Smash.Game.Physics.Structs;
 using Smash.Game.Scenes;
 using Smash.GraphicWrangler;
@@ -26,6 +27,8 @@ namespace Smash.Game.Physics
 
             FallSpeed = peram.FallSpeed;
             TerminalVelocity = peram.TermenalVelocity;
+
+            CollisionCapsule = new Capsule2D(10,20);
         }
 
         public TransformNode Transform { get; set; }
@@ -46,9 +49,11 @@ namespace Smash.Game.Physics
 
         public bool GroundStateChange { get; private set; }
         bool lg;
+        public fighter FighterRef { get; set; }
 
-        Quad ECB { get; set; }
         List<Line2D> ECBLineList { get; set; }
+
+        public Capsule2D CollisionCapsule { get; set; }
 
         public virtual void Update()
         {
@@ -61,12 +66,12 @@ namespace Smash.Game.Physics
 
             Init();
 
-            //ECB.Draw();
+            CollisionCapsule.Position = Transform.LocalPosition.Xy;
         }
 
         public virtual void Gravity()
         {
-            Velocity.Y -= FallSpeed * ArenaScene.GLobalSpeed;
+            Velocity.Y -= FallSpeed * FighterRef.FinalSpeed;
 
             if (Velocity.Y <= -TerminalVelocity)
             {
@@ -78,7 +83,6 @@ namespace Smash.Game.Physics
         {
             HitTop = false;
             HitSide = false;
-            HuggingLedge = false;
 
             if (TopDownCollision)
             {
@@ -114,10 +118,6 @@ namespace Smash.Game.Physics
 
                     if (slopehop < 0)
                     Transform.LocalPosition += new Vector3(0,slopehop,0);
-
-                    LineIntersection2D hugtest = GlobalIntersectionTest(new Line2D(Transform.LocalPosition.Xy + new Vector2(Velocity.X,1),Transform.LocalPosition.Xy + new Vector2(Velocity.X,-0.1f)));
-
-                    HuggingLedge = !hugtest.Valid;
                 }
             }
 
@@ -141,7 +141,6 @@ namespace Smash.Game.Physics
                 {
                     Velocity.Y = 0;
                     Transform.LocalPosition = new Vector3(toptest.IntersectionPoint.X,toptest.IntersectionPoint.Y - ECBHeight,0);
-
 
                     HitTop = true;
                 }
@@ -188,17 +187,17 @@ namespace Smash.Game.Physics
 
         public void MoveX(float speed,float lerp = 1)
         {
-            Velocity.X += (speed - Velocity.X) / (lerp / (float)Window.MainWindow.DeltaTime);
+            Velocity.X += (speed - Velocity.X) / (lerp / (float)FighterRef.FinalSpeed);
         }
 
         public void MoveY(float speed, float lerp = 1)
         {
-            Velocity.Y += (speed - Velocity.Y) / (lerp / (float)Window.MainWindow.DeltaTime);
+            Velocity.Y += (speed - Velocity.Y) / (lerp / (float)FighterRef.FinalSpeed);
         }
 
         public void Init()
         {
-            Transform.LocalPosition += new Vector3(Velocity.X,Velocity.Y,0) * ArenaScene.GLobalSpeed;
+            Transform.LocalPosition += new Vector3(Velocity.X, Velocity.Y, 0) * FighterRef.FinalSpeed;
         }
 
         public static LineIntersection2D GlobalIntersectionTest(Line2D line)
@@ -262,99 +261,6 @@ namespace Smash.Game.Physics
             return Out;
         }
 
-        public static QuadIntersection TestCollision(Quad r0, Quad r1,bool outline = true)
-        {
-            QuadIntersection Out = new QuadIntersection();
-
-            List<Line2D> t0 = r0.LineList;
-            List<Line2D> t1 = r1.LineList;
-
-            foreach (Line2D line in t0)
-            {
-                foreach (Line2D line0 in t1)
-                {
-                    LineIntersection2D intersectiontest = TestIntersection(line, line0);
-
-                    if (intersectiontest.Valid)
-                    {
-                        Out.Intersections.Add(intersectiontest);
-                    }
-                }
-            }
-
-            if (outline)
-            {
-                if (Out.Valid)
-                {
-                    r0.renderer.Color = new Vector4(0, 1, 0, 1);
-                    r1.renderer.Color = new Vector4(0, 1, 0, 1);
-                }
-                else
-                {
-                    r0.renderer.Color = new Vector4(1, 0, 0, 1);
-                    r1.renderer.Color = new Vector4(1, 0, 0, 1);
-                }
-            }
-
-            return Out;
-        }
-
-        public static CircleLineIntersection TestCollision(Circle circle, Line2D line)
-        {
-            CircleLineIntersection Out = new CircleLineIntersection();
-
-            Out.line = line;
-            Out.circle = circle;
-
-            if (CirclePointIntersection(circle, line.Point0))
-            {
-                Out.Valid = true;
-            }
-            else if (CirclePointIntersection(circle, line.Point1))
-            {
-                Out.Valid = true;
-            }
-            else
-            {
-                Line2D intersectiontest = new Line2D(circle.Position + (line.Normal * circle.R),circle.Position + (-line.Normal * circle.R));
-
-                Out.Valid = TestIntersection(intersectiontest,line).Valid;
-            }    
-
-            if (Out.Valid)
-            {
-                Out.circle.renderer.Color = new Vector4(0,0,0,1);
-            }
-            else
-            {
-                Out.circle.renderer.Color = new Vector4(1, 0, 0, 1);
-            }
-
-            return Out;
-        }
-
-        public static CircleQuadIntersection TestCollision(Circle circle,Quad quad)
-        {
-            CircleQuadIntersection Out = new CircleQuadIntersection();
-
-            Out.circle = circle;
-            Out.quad = quad;
-
-            List<Line2D> linetest = quad.LineList;
-
-            foreach (Line2D line in linetest)
-            {
-
-            }
-
-            return Out;
-        }
-
-        public static bool CirclePointIntersection(Circle circle,Vector2 point)
-        {
-            return ((point - circle.Position).Length < circle.R);
-        }
-
         public static GeomatryRenderer2D SceneGeomatryRenderer { get; set; } 
 
         public static void DrawSceneGeomatry()
@@ -369,7 +275,20 @@ namespace Smash.Game.Physics
             SceneGeomatryRenderer.Draw();
         }
 
-        public bool HuggingLedge { get; private set; }
+        public bool HuggingLedge
+        {
+            get
+            {
+                if (Grounded)
+                {
+                    LineIntersection2D hugtest = GlobalIntersectionTest(new Line2D(Transform.LocalPosition.Xy + new Vector2(Velocity.X, 1), Transform.LocalPosition.Xy + new Vector2(Velocity.X, -0.1f)));
+
+                    return !hugtest.Valid;
+                }
+
+                return false;
+            }
+        }
 
         public void HugLedge()
         {

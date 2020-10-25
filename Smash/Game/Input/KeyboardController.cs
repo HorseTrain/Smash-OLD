@@ -26,7 +26,7 @@ namespace Smash.Game.Input
 
             for (int i = 0; i < 132; i++)
             {
-                Buffers[i] -= (float)Window.MainWindow.DeltaTime;
+                Buffers[i] -= (float)Window.MainWindow.GlobalDeltaTime;
 
                 if (GetKeyPressed((Key)i))
                 {

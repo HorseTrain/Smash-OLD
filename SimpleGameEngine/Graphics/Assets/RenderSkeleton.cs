@@ -149,14 +149,13 @@ namespace SimpleGameEngine.Graphics.Assets
                 BuildKeys();
             }
 
+            if (name != null)
             if (NodeKeys.ContainsKey(name))
             {
                 return NodeKeys[name];
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         public void Update()

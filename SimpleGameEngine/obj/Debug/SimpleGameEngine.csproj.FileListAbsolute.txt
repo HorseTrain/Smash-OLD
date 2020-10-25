@@ -28,3 +28,13 @@ E:\Programming\Smash\SimpleGameEngine\obj\Debug\SimpleGameEngine.csproj.CoreComp
 E:\Programming\Smash\SimpleGameEngine\obj\Debug\SimpleGameEngine.csproj.CopyComplete
 E:\Programming\Smash\SimpleGameEngine\obj\Debug\SimpleGameEngine.dll
 E:\Programming\Smash\SimpleGameEngine\obj\Debug\SimpleGameEngine.pdb
+D:\Programming\Smash\SimpleGameEngine\bin\Debug\SimpleGameEngine.dll
+D:\Programming\Smash\SimpleGameEngine\bin\Debug\SimpleGameEngine.pdb
+D:\Programming\Smash\SimpleGameEngine\bin\Debug\OpenTK.dll
+D:\Programming\Smash\SimpleGameEngine\bin\Debug\OpenTK.pdb
+D:\Programming\Smash\SimpleGameEngine\bin\Debug\OpenTK.xml
+D:\Programming\Smash\SimpleGameEngine\obj\Debug\SimpleGameEngine.csprojAssemblyReference.cache
+D:\Programming\Smash\SimpleGameEngine\obj\Debug\SimpleGameEngine.csproj.CoreCompileInputs.cache
+D:\Programming\Smash\SimpleGameEngine\obj\Debug\SimpleGameEngine.csproj.CopyComplete
+D:\Programming\Smash\SimpleGameEngine\obj\Debug\SimpleGameEngine.dll
+D:\Programming\Smash\SimpleGameEngine\obj\Debug\SimpleGameEngine.pdb

@@ -48,7 +48,7 @@ namespace Smash.Game.Scenes
 
                 caughtfighter.phy.Velocity = new Vector2(0);
 
-                caughtfighter.skeleton.RootNode.LocalPosition += (new Vector3(Position.X, Position.Y + caughtfighter.skeleton.GetNode("Trans").WantedPosition.Y, 0) - caughtfighter.skeleton.RootNode.LocalPosition) / (2 / (float)Window.MainWindow.DeltaTime);
+                caughtfighter.skeleton.RootNode.LocalPosition += (new Vector3(Position.X, Position.Y + caughtfighter.skeleton.GetNode("Trans").WantedPosition.Y, 0) - caughtfighter.skeleton.RootNode.LocalPosition) / (2 / (float)Window.MainWindow.GlobalDeltaTime);
 
                 caughtfighter.Gdir = -Direction;
             }

@@ -20,7 +20,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\Smash-Releases\Game\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -83,15 +83,20 @@
     <Compile Include="Game\Fighter\fighter_draw.cs" />
     <Compile Include="Game\Fighter\fighter_generic.cs" />
     <Compile Include="Game\Fighter\fighter_scripts.cs" />
+    <Compile Include="Game\Fighter\fighter_s\fox.cs" />
+    <Compile Include="Game\Fighter\fighter_s\mario.cs" />
+    <Compile Include="Game\Fighter\fighter_s\tantan.cs" />
     <Compile Include="Game\Input\ControllerAxis.cs" />
     <Compile Include="Game\Input\FighterInput.cs" />
     <Compile Include="Game\Input\JoystickInput.cs" />
     <Compile Include="Game\Input\KeyboardController.cs" />
     <Compile Include="Game\Interaction\Hitbox.cs" />
-    <Compile Include="Game\Physics\Structs\Circle.cs" />
+    <Compile Include="Game\Physics\Shapes\Capsule2D.cs" />
+    <Compile Include="Game\Physics\Shapes\Circle2D.cs" />
+    <Compile Include="Game\Physics\Shapes\Rectangle.cs" />
+    <Compile Include="Game\Physics\Shapes\Shape.cs" />
     <Compile Include="Game\Physics\Structs\Line2D.cs" />
     <Compile Include="Game\Physics\Structs\LineIntersection2D.cs" />
-    <Compile Include="Game\Physics\Structs\Quad.cs" />
     <Compile Include="Game\Scene.cs" />
     <Compile Include="Game\SceneAssets\Stage.cs" />
     <Compile Include="Game\SceneObject.cs" />
@@ -100,8 +105,10 @@
     <Compile Include="Game\Scenes\Ledge.cs" />
     <Compile Include="Game\Scenes\MatLabs.cs" />
     <Compile Include="Game\SmashMath.cs" />
+    <Compile Include="Game\Stages\Training\TrainingBack.cs" />
     <Compile Include="Game\UI\Button.cs" />
     <Compile Include="Game\UI\MenuScene.cs" />
+    <Compile Include="Game\UI\MenuSlots\Entry.cs" />
     <Compile Include="Game\XMLParsable.cs" />
     <Compile Include="GraphicWrangler\Animator.cs" />
     <Compile Include="GraphicWrangler\GeomatryRenderer2D.cs" />

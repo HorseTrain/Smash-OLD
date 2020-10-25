@@ -11,8 +11,10 @@ using SimpleGameEngine.IO.XML;
 using Smash.Game.Fighter;
 using Smash.Game.Interaction;
 using Smash.Game.Physics;
+using Smash.Game.Physics.Shapes;
 using Smash.Game.Physics.Structs;
 using Smash.Game.SceneAssets;
+using Smash.Game.Stages.Training;
 using Smash.GraphicWrangler;
 using Smash.IO;
 using System;
@@ -36,10 +38,12 @@ namespace Smash.Game.Scenes
 
         public List<Ledge> Ledges { get; set; } = new List<Ledge>();
 
-        Circle circle = new Circle(10);
+        TrainingBack back;
 
         public ArenaScene()
         {
+            back = new TrainingBack();
+
             Skybox = new SkyboxRenderer("StandardCubeMap");
 
             Camera = new RenderCamera();
@@ -51,7 +55,7 @@ namespace Smash.Game.Scenes
                 AddFighter(load,0);
             }
 
-            int SizeAdd = 80;
+            int SizeAdd = 800;
 
             Vector2 Left = new Vector2(-SizeAdd, 0);
             Vector2 Right = new Vector2(SizeAdd, 0);
@@ -76,11 +80,11 @@ namespace Smash.Game.Scenes
 
             //Skybox.Draw();
 
-            Hitbox.UpdateAllHitboxes();
+            Hitbox.UpdateAllHitBoxes();
 
             if (HasFighters)
             {
-                GLobalSpeed = (float)Window.MainWindow.DeltaTime;
+                GLobalSpeed = (float)Window.MainWindow.GlobalDeltaTime;
 
                 UpdateFighters();
 
@@ -103,11 +107,7 @@ namespace Smash.Game.Scenes
 
             SimplePhysics.DrawSceneGeomatry();
 
-            circle.Position = Fighters[0].skeleton.RootNode.LocalPosition.Xy;
-
-            SimplePhysics.TestCollision(circle,SimplePhysics.SceneGeomatry[0]);
-
-            //circle.Draw();
+            back.Draw();
         }
 
         float MinX;
@@ -168,24 +168,36 @@ namespace Smash.Game.Scenes
 
         public float CameraLerp { get; set; } = 2;
         public float CameraMinFOV { get; set; } = 50;
-        
+
+        float WantedSize;
+        float lws;
+
         public void CameraOrtho()
         {
             Vector2 AveragePosition = Vector2.Zero;
 
-            float WantedCameraSizeX = ((Math.Abs(MaxX - MinX) + 50) / Window.MainWindow.ScreenAspect);
-            float WantedCameraSizeY = Math.Abs(MaxY - MinY) + 50;
+            float WantedCameraSizeX = (Math.Abs(MaxX - MinX) / Window.MainWindow.ScreenAspect) + 50;
+            float WantedCameraSizeY = Math.Abs(MaxY - MinY) + 50;     
 
             if (WantedCameraSizeX > WantedCameraSizeY)
             {
-                Camera.CameraFOV += (WantedCameraSizeX - Camera.CameraFOV) / (CameraLerp / (float)Window.MainWindow.DeltaTime);
+                WantedSize = WantedCameraSizeX;
             }
             else
             {
-                Camera.CameraFOV += (WantedCameraSizeY - Camera.CameraFOV) / (CameraLerp / (float)Window.MainWindow.DeltaTime);
+                WantedSize = WantedCameraSizeY;
             }
 
-            Camera.CameraPosition += (new Vector3((MinX+ MaxX)/2f, ((MinY + MaxY) / 2f) + 10, 20) - Camera.CameraPosition) / (CameraLerp / (float)Window.MainWindow.DeltaTime);
+            if (WantedSize <= lws)
+                CameraLerp += (40 - CameraLerp) / (10 /Window.MainWindow.GlobalDeltaTime);
+            else
+                CameraLerp += (20 - CameraLerp) / (5 / Window.MainWindow.GlobalDeltaTime);
+
+            lws = WantedSize;
+
+            Camera.CameraFOV += ((WantedSize) - Camera.CameraFOV) / (CameraLerp / (float)Window.MainWindow.GlobalDeltaTime);
+
+            Camera.CameraPosition += (new Vector3((MinX+ MaxX)/2f, ((MinY + MaxY) / 2f) + 10, 20) - Camera.CameraPosition) / (CameraLerp / (float)Window.MainWindow.GlobalDeltaTime);
         }
 
         public void CameraPers()
@@ -269,7 +281,14 @@ namespace Smash.Game.Scenes
 
         public static fighter LoadFighterStatic(string name, int id)
         {
-            fighter f = new fighter();
+            Type t = Type.GetType("Smash.Game.Fighter.fighter_s." + name);
+
+            fighter f;
+
+            if (t == null)
+                f = new fighter();
+            else
+                f = (fighter)Activator.CreateInstance(t);
 
             f.Model = Parsers.LoadModel(@"fighter/" + name + @"/model/body/c0" + id);
 

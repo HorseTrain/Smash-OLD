@@ -1,5 +1,6 @@
 ﻿using SimpleGameEngine.Graphics;
 using SimpleGameEngine.IO.XML;
+using Smash.Game.Interaction;
 using Smash.Game.Scenes;
 using Smash.IO;
 using System;
@@ -42,6 +43,12 @@ namespace Smash.Game.Fighter
             DetectDash();
 
             DetectWalk();
+
+            DetectCatch("catch");
+
+            DetectSquat();
+
+            phy.HugLedge();
         }
 
         public virtual void TurnWhenDone()
@@ -52,10 +59,13 @@ namespace Smash.Game.Fighter
             }
         }
 
-        public virtual void WhenFinishedGoTo(string name,int lerp = 0)
+        public virtual void WhenFinishedGoTo(string name,int lerp = 0,bool turn = false)
         {
             if (anim.FinishedAnimation)
             {
+                if (turn)
+                    Gdir *= -1;
+
                 anim.CrossFade(name,lerp);
             }
         }
@@ -63,7 +73,7 @@ namespace Smash.Game.Fighter
         public int Jumps { get; private set; }
         public virtual void DetectJump()
         {
-            if (input.JumpButton.Buffered)
+            if (input.JumpButton.Buffered && !InAttack)
             {
                 if (Jumps > 0)
                 {
@@ -139,8 +149,9 @@ namespace Smash.Game.Fighter
         {
             Landed = false;
 
-            AirTime += (float)Window.MainWindow.DeltaTime;
+            AirTime += FinalSpeed;
 
+            if (!InAttack)
             DetectJump();
 
             AirMovement();
@@ -151,8 +162,6 @@ namespace Smash.Game.Fighter
 
             if (phy.Velocity.Y > 0)
                 AirVelocityEverPositive = true;
-
-            DetectAerial();
         }
 
         public virtual void AirMovement()
@@ -316,15 +325,23 @@ namespace Smash.Game.Fighter
         float RunStopTimer = 0;
         public virtual void RunBreak()
         {
-            DetectDash();
-
             WhenFinishedGoTo("wait1");
-
-            phy.MoveX(0,Peram.RunBreakSpeed);
 
             phy.HugLedge();
 
             RunStopTimer = 0;
+
+            if (anim.CurrentKeyIndex < 3)
+            {
+                if (input.Cdir == -Gdir)
+                anim.CrossFade("turnrun");
+            }
+            else
+            {
+                phy.MoveX(0, Peram.RunBreakSpeed);
+
+                DetectDash();
+            }
         }
 
         public void MoveInAnimation()
@@ -360,6 +377,8 @@ namespace Smash.Game.Fighter
                 Dash("turndash",true);
 
             DetectMoveFall("walk");
+
+            DetectCatch("catch");
         }
 
         public virtual void DetectFall()
@@ -416,31 +435,26 @@ namespace Smash.Game.Fighter
 
         public bool AirVelocityEverPositive { get; set; }
 
-        public virtual void DetectAerial()
-        {
-            if (input.AttackController.Buffered)
-            {
-                switch (input.AttackController.Direction)
-                {
-                    case Input.ControllerDirection.Up: AttackA("attackairhi"); break;
-                    case Input.ControllerDirection.Forward: AttackA("attackairf"); break;
-                    case Input.ControllerDirection.Back: AttackA("attackairb"); break;
-                    case Input.ControllerDirection.Down: AttackA("attackairlw"); break;
-                    case Input.ControllerDirection.Neuteral: AttackA("attackairn"); break;
-                }    
-            }
-        }
-
         public virtual void AttackAir()
         {
             WhenFinishedGoTo("fall");            
         }
 
-        public void AttackA(string name,bool force = false)
+        public void AttackA(string name,bool force = true)
         {
-            input.AttackController.KillBuffer();
+            if (!InAttack || force)
+            {
+                input.AttackController.KillBuffer();
+                input.AButton.EndBuffer();
 
-            anim.CrossFade(name,0, force);
+                anim.CrossFade(name, 0, force);
+
+                InAttack = true;
+
+                Attacked = true;
+
+                ExistingQue = new Dictionary<int, Hitbox[]>();
+            }
         }
 
         List<XMLElement> elements { get; set; } = new List<XMLElement>();
@@ -460,6 +474,36 @@ namespace Smash.Game.Fighter
         public void Entry()
         {
             WhenFinishedGoTo("wait1");
+        }
+
+        public void DetectCatch(string name = "catch",bool turn = false)
+        {
+            if (input.CatchButton.Buffered)
+            {
+                if (turn)
+                    Gdir *= -1;
+
+                anim.CrossFade(name);
+
+                input.CatchButton.EndBuffer();
+            }
+        }
+
+        public void Catch(float slow = 5,bool turn = false)
+        {
+            WhenFinishedGoTo("wait1",0,turn);
+
+            MoveInAnimation();
+
+            phy.HugLedge();
+        }
+
+        public void DetectSquat()
+        {
+            if (input.Ydir.Value < -0.5f)
+            {
+                anim.CrossFade("squat");
+            }
         }
     }
 }

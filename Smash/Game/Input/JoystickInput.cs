@@ -47,7 +47,7 @@ namespace Smash.Game.Input
                     Buffers[i] = FighterInput.BufferWindow;
                 }
 
-                Buffers[i] -= (float)Window.MainWindow.DeltaTime;
+                Buffers[i] -= (float)Window.MainWindow.GlobalDeltaTime;
             }
         }
 

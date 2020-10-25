@@ -37,7 +37,7 @@ namespace Smash.Game.Input
 
             if (Math.Abs(value) > 0.2f)
             {
-                tapcounter += (float)Window.MainWindow.DeltaTime;
+                tapcounter += (float)Window.MainWindow.GlobalDeltaTime;
 
                 if (tapcounter < 5)
                 {

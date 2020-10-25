@@ -314,6 +314,9 @@ namespace Smash.IO
 
                     string name = SplitString(3,Path.GetFileName(anim)).Split('.')[0];
 
+                    if (Out.Animations.ContainsKey(name))
+                        name += "_1";
+                    
                     Out.Animations.Add(name,animation);
                 }
             }

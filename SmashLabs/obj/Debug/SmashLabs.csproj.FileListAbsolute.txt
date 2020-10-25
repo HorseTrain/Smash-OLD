@@ -34,3 +34,9 @@ E:\Programming\Smash\SmashLabs\obj\Debug\SmashLabs.csprojAssemblyReference.cache
 E:\Programming\Smash\SmashLabs\obj\Debug\SmashLabs.csproj.CoreCompileInputs.cache
 E:\Programming\Smash\SmashLabs\obj\Debug\SmashLabs.dll
 E:\Programming\Smash\SmashLabs\obj\Debug\SmashLabs.pdb
+D:\Programming\Smash\SmashLabs\bin\Debug\SmashLabs.dll
+D:\Programming\Smash\SmashLabs\bin\Debug\SmashLabs.pdb
+D:\Programming\Smash\SmashLabs\obj\Debug\SmashLabs.csprojAssemblyReference.cache
+D:\Programming\Smash\SmashLabs\obj\Debug\SmashLabs.csproj.CoreCompileInputs.cache
+D:\Programming\Smash\SmashLabs\obj\Debug\SmashLabs.dll
+D:\Programming\Smash\SmashLabs\obj\Debug\SmashLabs.pdb

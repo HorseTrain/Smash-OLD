@@ -34,7 +34,7 @@ namespace SimpleGameEngine.Graphics.Assets
                 }
                 else
                 {
-                    return new Tuple<T, T>(GetKey<T>(FrameCount - 1), GetKey<T>(FrameCount - 1));
+                    return new Tuple<T, T>(GetKey<T>(index), GetKey<T>(FrameCount - 1));
                 }
             }
             else

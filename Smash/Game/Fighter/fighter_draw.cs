@@ -38,7 +38,7 @@ namespace Smash.Game.Fighter
             switch (Peram.TurnMode)
             {
                 case (int)TurnMode.TurnWithScale: RootNode.LocalScale = new Vector3(-1, 1, -Gdir); RootNode.LocalRotation = Quaternion.FromAxisAngle(Vector3.UnitY, MathHelper.DegreesToRadians(-90)); break;
-                case (int)TurnMode.TurnWithRotation: RootNode.LocalScale = new Vector3(-1, 1, 1);  RootNode.LocalRotation = Quaternion.FromAxisAngle(Vector3.UnitY, MathHelper.DegreesToRadians(90 * Gdir)); break;
+                case (int)TurnMode.TurnWithRotation: RootNode.LocalScale = new Vector3(1, 1, 1);  RootNode.LocalRotation = Quaternion.FromAxisAngle(Vector3.UnitY, MathHelper.DegreesToRadians(90 * Gdir)); break;
             }
         }
     }

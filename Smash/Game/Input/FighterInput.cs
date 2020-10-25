@@ -42,11 +42,10 @@ namespace Smash.Game.Input
         public Button JumpButton => Inputs[0];
         public Button AButton => Inputs[1];
         public Button BButton => Inputs[2];
+        public Button CatchButton => Inputs[3];
 
         public AttackBuffer AttackController { get; set; } = new AttackBuffer();
         public AttackBuffer SpecialController { get; set; } = new AttackBuffer();
-
-        public ControllerDirection BufferedAttack { get; set; }
 
         public FighterInput(fighter fref)
         {
@@ -58,6 +57,7 @@ namespace Smash.Game.Input
             Inputs.Add(new Button(Key.LShift,6));
             Inputs.Add(new Button(Key.Z, 1));
             Inputs.Add(new Button(Key.X, 2));
+            Inputs.Add(new Button(Key.C,5 ));
 
             Axis.Add(new InputAxis(Key.Left,Key.Right,0));
             Axis.Add(new InputAxis(Key.Down, Key.Up, 1,true));
@@ -152,7 +152,10 @@ namespace Smash.Game.Input
 
         public void EndBuffer()
         {
+            if (cachedjs != null)
             cachedjs.EndBuffer(ControllerIndex);
+
+            if (cachedks != null)
             cachedks.EndBuffer(keyboardKey);
         }
 
@@ -169,6 +172,8 @@ namespace Smash.Game.Input
         public bool Tapped { get; private set; }
         public bool Released { get; private set; } = true;
         public int Ldir { get; private set; }
+        public bool TapBuffered => TapBuffer > 0;
+        float TapBuffer { get; set; }
 
         Key l, r;
         int index;
@@ -191,6 +196,8 @@ namespace Smash.Game.Input
 
         public void Update(KeyboardController ks, JoystickInput js, ControllerMode mode)
         {
+            TapBuffer -= Window.MainWindow.GlobalDeltaTime;
+
             switch (mode)
             {
                 case ControllerMode.Controller: Value = js.Axis[index].value * dir; Tapped = js.Axis[index].Tapped; Dir = js.Axis[index].Dir * dir; break;
@@ -223,6 +230,9 @@ namespace Smash.Game.Input
 
             if (Dir != 0)
                 Ldir = Dir;
+
+            if (Tapped)
+                TapBuffer = 5;
         }
 
         public static implicit operator int(InputAxis axis)
@@ -323,7 +333,7 @@ namespace Smash.Game.Input
 
         public void Update()
         {
-            BufferLocation -= (float)Window.MainWindow.DeltaTime;
+            BufferLocation -= (float)Window.MainWindow.GlobalDeltaTime;
         }
 
         public bool Buffered => BufferLocation > 0;

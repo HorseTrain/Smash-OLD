@@ -67,7 +67,7 @@ namespace Smash.Game.Scenes
         {
             Vector2 currentmouse = new Vector2(mstate.X,mstate.Y);
 
-            MouseVel = ((currentmouse - lastmouse)*(float)Window.MainWindow.DeltaTime) / 2;
+            MouseVel = ((currentmouse - lastmouse)*(float)Window.MainWindow.GlobalDeltaTime) / 2;
 
             lastmouse = currentmouse;
 
@@ -96,22 +96,22 @@ namespace Smash.Game.Scenes
 
                 if (kstate.IsKeyDown(Key.W))
                 {
-                    Camera.CameraPosition -= Camera.CameraRotationMatrix.Column2.Xyz * (float)Window.MainWindow.DeltaTime * speed;
+                    Camera.CameraPosition -= Camera.CameraRotationMatrix.Column2.Xyz * (float)Window.MainWindow.GlobalDeltaTime * speed;
                 }
 
                 if (kstate.IsKeyDown(Key.S))
                 {
-                    Camera.CameraPosition += Camera.CameraRotationMatrix.Column2.Xyz * (float)Window.MainWindow.DeltaTime * speed;
+                    Camera.CameraPosition += Camera.CameraRotationMatrix.Column2.Xyz * (float)Window.MainWindow.GlobalDeltaTime * speed;
                 }
 
                 if (kstate.IsKeyDown(Key.A))
                 {
-                    Camera.CameraPosition -= Camera.CameraRotationMatrix.Column0.Xyz * (float)Window.MainWindow.DeltaTime * speed;
+                    Camera.CameraPosition -= Camera.CameraRotationMatrix.Column0.Xyz * (float)Window.MainWindow.GlobalDeltaTime * speed;
                 }
 
                 if (kstate.IsKeyDown(Key.D))
                 {
-                    Camera.CameraPosition += Camera.CameraRotationMatrix.Column0.Xyz * (float)Window.MainWindow.DeltaTime * speed;
+                    Camera.CameraPosition += Camera.CameraRotationMatrix.Column0.Xyz * (float)Window.MainWindow.GlobalDeltaTime * speed;
                 }
             }
         }
