@@ -139,9 +139,9 @@
       <Project>{3abc7fef-50bf-4503-a54b-4f3fe5fcfa09}</Project>
       <Name>Exporter</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SimpleGameEngine\SimpleGameEngine.csproj">
+    <ProjectReference Include="..\SimpleGameEngine\SimpleGameEngineGraphics.csproj">
       <Project>{118f5bc3-c97b-4f76-aa68-e425642c440c}</Project>
-      <Name>SimpleGameEngine</Name>
+      <Name>SimpleGameEngineGraphics</Name>
     </ProjectReference>
     <ProjectReference Include="..\SmashLabs\SmashLabs.csproj">
       <Project>{35664f18-b90d-46ee-989c-1e0e1824b314}</Project>
