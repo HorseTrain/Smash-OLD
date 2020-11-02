@@ -80,6 +80,7 @@ namespace SimpleGameEngine.Graphics.Assets
 
                 if (Textures[i] != null)
                 {
+                    UniformVector2("TextureSize" + i, new Vector2(Textures[i].Width, Textures[i].Height));
                     Textures[i].Use(TextureUnit.Texture0 + i);
                 }
             }

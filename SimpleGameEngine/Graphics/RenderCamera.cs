@@ -26,7 +26,7 @@ namespace SimpleGameEngine.Graphics
         public float CameraViewDistance { get; set; } = 10000;
 
         public Matrix4 CameraRotationMatrix => Matrix4.CreateFromQuaternion(CameraRotation);
-        public Matrix4 CameraPositionMatrix => Matrix4.CreateTranslation(-CameraPosition);
+        public Matrix4 CameraPositionMatrix => Matrix4.CreateTranslation(-CameraPosition + GetShakeOffset(0.1f,20));
         public Matrix4 CameraViewMatrix => CameraPositionMatrix * CameraRotationMatrix;
 
         public Vector3 CameraNormal => CameraRotationMatrix.Column2.Xyz;
@@ -50,5 +50,22 @@ namespace SimpleGameEngine.Graphics
             }
         }
         public Matrix4 CameraViewThrustum => CameraViewMatrix * CameraProjectionMatrix;
+
+        public float shaketimer;
+        public bool Shaking => shaketimer > 0;
+        public void Shake(float length = 10)
+        {
+            shaketimer = 10;
+        }
+
+        public Vector3 GetShakeOffset(float mag,int res)
+        {
+            if (Shaking)
+            {
+                return new Vector3(Window.GlobalRNG.Next(-res,res)/(float)res, Window.GlobalRNG.Next(-res, res) / (float)res, Window.GlobalRNG.Next(-res, res) / (float)res) * mag;
+            }
+
+            return new Vector3();
+        }
     }
 }

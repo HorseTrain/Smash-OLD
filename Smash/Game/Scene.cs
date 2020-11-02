@@ -20,6 +20,12 @@ namespace Smash.Game
         public RenderCamera Camera { get; set; }
         public static Scene CurrentScene { get; set; }
         public List<SceneObject> SceneObjects { get; set; } = new List<SceneObject>();
+        public static Random GlobalRandom = new Random();
+
+        public static float RandomFloat(int min, int max)
+        {
+            return GlobalRandom.Next(min * 100, max * 100) / 100;
+        }
 
         public Scene()
         {

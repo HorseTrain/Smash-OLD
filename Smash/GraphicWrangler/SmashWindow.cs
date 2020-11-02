@@ -9,6 +9,7 @@ using System;
 using Smash.Game;
 using Smash.Game.Scenes;
 using Smash.Game.UI;
+using Smash.Game.Debug;
 
 namespace Smash.GraphicWrangler
 {
@@ -31,9 +32,11 @@ namespace Smash.GraphicWrangler
 
             CurrentScene.Update();
 
+            GameStats.ShowGameStats();
+
             IRenderable.DrawEntireDrawQue();
 
-            window.Title = FrameRate.ToString() + " fps";
+            Garbage.CollectTrash();
 
             PostWindow();
         }

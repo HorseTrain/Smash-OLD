@@ -20,6 +20,7 @@ namespace SimpleGameEngine.Graphics
         public long FrameRendertime { get; private set; } //In miliseconds
         public double FrameRate { get; private set; }
         double DeltaTime { get; set; }
+        public static Random GlobalRNG = new Random();
 
         public float GlobalDeltaTime => (float)DeltaTime;
 
@@ -48,7 +49,7 @@ namespace SimpleGameEngine.Graphics
 
             Start();
 
-            window.Run();
+            window.Run(1d/60d);
 
             Active = false;
         }

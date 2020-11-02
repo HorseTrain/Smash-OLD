@@ -33,16 +33,18 @@ namespace Smash.Game.Interaction
         public float EndTime { get; set; }
         public fighter fRef { get; set; }
         public HitboxType Type;
+        public int Layer;
 
         public Hitbox()
         {
             AllHitBoxes.Add(this);
         }
 
-        public void SetUp(HitboxType Type = HitboxType.Attack)
+        public void SetUp(HitboxType Type = HitboxType.Attack, int layer = 0)
         {
             EndTime = GetObject<int>("EndTime");
             R = GetObject<float>("Size");
+            this.Layer = layer;
             this.Type = Type;
         }
 
@@ -62,11 +64,13 @@ namespace Smash.Game.Interaction
 
             EndTime -= fRef.FinalSpeed;
 
-            CollisionTest();
-
             if (fRef.DestroyAllHitBoxes || EndTime < 0)
             {
                 Destroy();
+            }
+            else
+            {
+                CollisionTest();
             }
 
             if (DebugDrawHitBoxes)
@@ -86,20 +90,38 @@ namespace Smash.Game.Interaction
             {
                 if (f != fRef)
                 {
-                    if (TestCollision(f.phy.CollisionCapsule))
-                    {
-                        if (!HitQue.Contains(f))
-                        {
-                            HitQue.Add(f);
+                    bool CanComplete = true;
 
-                            f.Hit(this);
-                        }
-                    }
-                    else
+                    if (Layer != -1)
                     {
-                        if (HitQue.Contains(f))
+                        if (fRef.FighterHitExclusion[Layer].Contains(f))
+                            CanComplete = false;
+                    }
+
+                    if (CanComplete)
+                    {
+                        if (TestCollision(f.phy.CollisionCapsule))
                         {
-                            //HitQue.Remove(f);
+                            if (!HitQue.Contains(f))
+                            {
+                                HitQue.Add(f);
+
+                                f.Hit(this);
+
+                                Console.WriteLine(Layer);
+
+                                if (Layer != -1)
+                                {
+                                    fRef.FighterHitExclusion[Layer].Add(f);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (HitQue.Contains(f))
+                            {
+                                //HitQue.Remove(f);
+                            }
                         }
                     }
                 }

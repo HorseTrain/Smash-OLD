@@ -268,13 +268,15 @@ namespace Smash.Game.Input
             {
                 float angle = Angle;
 
+                float asplit = 70;
+
                 if (Size > 0.5f)
                 {
-                    if (angle < 45 )
+                    if (angle < asplit)
                     {
                         return ControllerDirection.Up;
                     }
-                    else if (angle >= 45 && angle < 135)
+                    else if (angle >= asplit && angle < (180 - asplit))
                     {
                         if (x.Dir == Gdir)
                         {

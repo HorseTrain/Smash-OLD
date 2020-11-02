@@ -9,6 +9,8 @@ using SimpleGameEngine.IO.Collada;
 using SimpleGameEngine.IO.Collada.Scene;
 using SimpleGameEngine.IO.XML;
 using Smash.Game.Fighter;
+using Smash.Game.Fighter.fighter_s;
+using Smash.Game.Fighter.Particals;
 using Smash.Game.Interaction;
 using Smash.Game.Physics;
 using Smash.Game.Physics.Shapes;
@@ -22,6 +24,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Smash.Game.Scenes
@@ -39,6 +42,13 @@ namespace Smash.Game.Scenes
         public List<Ledge> Ledges { get; set; } = new List<Ledge>();
 
         TrainingBack back;
+
+        public ParticalRenderer test;
+
+        public float BlastZoneNX = -240;
+        public float BlastZonePX = 240;
+        public float BlastZoneBottom = -140;
+        public float BlastZoneTop = 192;
 
         public ArenaScene()
         {
@@ -88,6 +98,7 @@ namespace Smash.Game.Scenes
 
                 UpdateFighters();
 
+                if (!CameraLocked)
                 CameraControles();
 
                 if (Fighters[0].input.KS.GetKey(OpenTK.Input.Key.R))
@@ -108,6 +119,16 @@ namespace Smash.Game.Scenes
             SimplePhysics.DrawSceneGeomatry();
 
             back.Draw();
+
+            CameraLocked = false;
+        }
+
+        public void KillFighter(fighter fref)
+        {
+            if (fref.skeleton.RootNode.LocalPosition.X < BlastZoneNX || fref.skeleton.RootNode.LocalPosition.X > BlastZonePX || fref.skeleton.RootNode.LocalPosition.Y > BlastZoneTop || fref.skeleton.RootNode.LocalPosition.Y < BlastZoneBottom)
+            {
+                fref.Kill();
+            }
         }
 
         float MinX;
@@ -124,25 +145,36 @@ namespace Smash.Game.Scenes
 
         public void CameraAvg()
         {
-            MinX = Fighters[0].skeleton.RootNode.LocalPosition.X;
-            MaxX = MinX;
+            for (int i = 0; i < Fighters.Count; i++)
+            {
+                if (Fighters[i].AccountCamera)
+                {
+                    MinX = Fighters[i].skeleton.RootNode.LocalPosition.X;
+                    MaxX = MinX;
 
-            MinY = Fighters[0].skeleton.RootNode.LocalPosition.Y;
-            MaxY = MinY;
+                    MinY = Fighters[i].skeleton.RootNode.LocalPosition.Y;
+                    MaxY = MinY;
+
+                    break;
+                }
+            }
 
             foreach (fighter f in Fighters)
             {
-                if (f.skeleton.RootNode.LocalPosition.X < MinX)
-                    MinX = f.skeleton.RootNode.LocalPosition.X;
+                if (f.AccountCamera)
+                {
+                    if (f.skeleton.RootNode.LocalPosition.X < MinX)
+                        MinX = f.skeleton.RootNode.LocalPosition.X;
 
-                if (f.skeleton.RootNode.LocalPosition.X > MaxX)
-                    MaxX = f.skeleton.RootNode.LocalPosition.X;
+                    if (f.skeleton.RootNode.LocalPosition.X > MaxX)
+                        MaxX = f.skeleton.RootNode.LocalPosition.X;
 
-                if (f.skeleton.RootNode.LocalPosition.Y < MinY)
-                    MinY = f.skeleton.RootNode.LocalPosition.Y;
+                    if (f.skeleton.RootNode.LocalPosition.Y < MinY)
+                        MinY = f.skeleton.RootNode.LocalPosition.Y;
 
-                if (f.skeleton.RootNode.LocalPosition.Y > MaxY)
-                    MaxY = f.skeleton.RootNode.LocalPosition.Y;
+                    if (f.skeleton.RootNode.LocalPosition.Y > MaxY)
+                        MaxY = f.skeleton.RootNode.LocalPosition.Y;
+                }
             }
 
             DisX = Math.Abs(MaxX - MinX);
@@ -172,12 +204,22 @@ namespace Smash.Game.Scenes
         float WantedSize;
         float lws;
 
+        bool CameraLocked;
+        public void LockCamera()
+        {
+            CameraLocked = true;
+        }
+
+        Vector3 WantedPosition;
+        float WantedCameraSizeX;
+        float WantedCameraSizeY;
+
         public void CameraOrtho()
         {
             Vector2 AveragePosition = Vector2.Zero;
 
-            float WantedCameraSizeX = (Math.Abs(MaxX - MinX) / Window.MainWindow.ScreenAspect) + 50;
-            float WantedCameraSizeY = Math.Abs(MaxY - MinY) + 50;     
+            WantedCameraSizeX = (Math.Abs(MaxX - MinX) / Window.MainWindow.ScreenAspect) + 50;
+            WantedCameraSizeY = Math.Abs(MaxY - MinY) + 50;     
 
             if (WantedCameraSizeX > WantedCameraSizeY)
             {
@@ -195,9 +237,31 @@ namespace Smash.Game.Scenes
 
             lws = WantedSize;
 
-            Camera.CameraFOV += ((WantedSize) - Camera.CameraFOV) / (CameraLerp / (float)Window.MainWindow.GlobalDeltaTime);
+            Vector3 soffset = new Vector3(0,0,0);
 
-            Camera.CameraPosition += (new Vector3((MinX+ MaxX)/2f, ((MinY + MaxY) / 2f) + 10, 20) - Camera.CameraPosition) / (CameraLerp / (float)Window.MainWindow.GlobalDeltaTime);
+            WantedPosition = new Vector3((MinX + MaxX) / 2f, ((MinY + MaxY) / 2f) + 10, 20);
+
+            //CameraBounds();
+
+            Camera.CameraFOV += ((WantedSize) - Camera.CameraFOV) / (CameraLerp / (float)Window.MainWindow.GlobalDeltaTime);
+            Camera.CameraPosition += (WantedPosition - Camera.CameraPosition) / (CameraLerp / (float)Window.MainWindow.GlobalDeltaTime);
+
+            RenderCamera.MainCamera.shaketimer -= Window.MainWindow.GlobalDeltaTime;
+        }
+
+        public void CameraBounds()
+        {
+            float Displacement = 50;
+
+            if (WantedPosition.X + WantedCameraSizeX >= BlastZonePX - Displacement)
+            {
+                WantedPosition.X = (BlastZonePX - WantedCameraSizeX) - Displacement;
+            }
+
+            if (WantedPosition.X - WantedCameraSizeX <= BlastZoneNX + Displacement)
+            {
+                WantedPosition.X = (BlastZoneNX + WantedCameraSizeX) + Displacement;
+            }
         }
 
         public void CameraPers()
@@ -252,6 +316,8 @@ namespace Smash.Game.Scenes
                 f.Update();
 
                 DetectLedge(f);
+
+                KillFighter(f);
             }
 
             foreach (Ledge ledge in Ledges)
@@ -286,7 +352,7 @@ namespace Smash.Game.Scenes
             fighter f;
 
             if (t == null)
-                f = new fighter();
+                f = new pit();
             else
                 f = (fighter)Activator.CreateInstance(t);
 

@@ -60,5 +60,10 @@ namespace Smash.IO
         {
             return File.Exists(GetPath(path));
         }
+
+        public static string ReadWholeFile(string path)
+        {
+            return File.ReadAllText(GetPath(path));
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using SimpleGameEngine.Graphics;
+﻿using OpenTK;
+using SimpleGameEngine.Graphics;
 using SimpleGameEngine.IO.XML;
 using Smash.Game.Interaction;
 using Smash.Game.Scenes;
@@ -26,16 +27,24 @@ namespace Smash.Game.Fighter
         {
             if (!phy.Grounded)
             {
-                anim.CrossFade("fall",100);
+                anim.CrossFade("fall", 100);
             }
 
-            if (anim.CurrentAnimationName == "wait1")
+            if (!anim.CurrentAnimationName.Contains("ottotto"))
             {
-                WhenFinishedGoTo("wait" + FighterRNG.Next(1, 4));
-            }
-            else
-            {
-                WhenFinishedGoTo("wait1");
+                if (phy.Ottotto)
+                {
+                    anim.CrossFade("ottotto");
+                }
+
+                if (anim.CurrentAnimationName == "wait1")
+                {
+                    WhenFinishedGoTo("wait" + FighterRNG.Next(1, 4));
+                }
+                else
+                {
+                    WhenFinishedGoTo("wait1");
+                }
             }
 
             phy.MoveX(0, 5);
@@ -59,20 +68,25 @@ namespace Smash.Game.Fighter
             }
         }
 
-        public virtual void WhenFinishedGoTo(string name,int lerp = 0,bool turn = false)
+        public virtual void WhenFinishedGoTo(string name, int lerp = 0, bool turn = false)
         {
             if (anim.FinishedAnimation)
             {
                 if (turn)
                     Gdir *= -1;
 
-                anim.CrossFade(name,lerp);
+                anim.CrossFade(name, lerp);
             }
         }
 
         public int Jumps { get; private set; }
+        public bool JumpedB;
+        public bool JumpedF;
         public virtual void DetectJump()
         {
+            JumpedB = false;
+            JumpedF = false;
+
             if (input.JumpButton.Buffered && !InAttack)
             {
                 if (Jumps > 0)
@@ -92,17 +106,21 @@ namespace Smash.Game.Fighter
                             Gdir *= -1;
                         }
 
-                        anim.CrossFade("jumpsquat"); 
+                        anim.CrossFade("jumpsquat");
                     }
                     else
                     {
                         if (input.Cdir.Dir == 0 || input.Cdir == Gdir)
                         {
                             anim.CrossFade("jumpaerialf", 0, true);
+
+                            JumpedF = true;
                         }
                         else
                         {
                             anim.CrossFade("jumpaerialb", 0, true);
+
+                            JumpedB = true;
                         }
 
                         phy.Velocity.Y = Peram.JumpHeight;
@@ -142,6 +160,11 @@ namespace Smash.Game.Fighter
                 }
             }
 
+            if (SlowTurning)
+            {
+                SlowTurn();
+            }
+
             ScriptMain();
         }
 
@@ -152,7 +175,7 @@ namespace Smash.Game.Fighter
             AirTime += FinalSpeed;
 
             if (!InAttack)
-            DetectJump();
+                DetectJump();
 
             AirMovement();
 
@@ -175,7 +198,7 @@ namespace Smash.Game.Fighter
 
             if (input.Cdir != 0)
             {
-                phy.MoveX(input.Cdir * Peram.AirSpeedMax,Peram.AirAcc);
+                phy.MoveX(input.Cdir * Peram.AirSpeedMax, Peram.AirAcc);
             }
             else
             {
@@ -196,28 +219,39 @@ namespace Smash.Game.Fighter
         {
             if (!Landed)
             {
-                if (!anim.CurrentAnimationName.Contains("attack"))
+                if (TumbleTime < 10)
                 {
-                    if (AirTime < 20)
-                        anim.CrossFade("landinglight");
+                    if (!anim.CurrentAnimationName.Contains("attack"))
+                    {
+                        if (AirTime < 20)
+                            anim.CrossFade("landinglight");
+                        else
+                            anim.CrossFade("landingheavy");
+
+                        LandJumpParticals();
+                    }
                     else
-                        anim.CrossFade("landingheavy");
+                    {
+                        anim.CrossFade("landing" + Parsers.SplitString(6, anim.CurrentAnimationName));
+
+                        LandJumpParticals();
+                    }
+
+                    if (TurnWhenFinished)
+                    {
+                        Gdir *= -1;
+                        TurnWhenFinished = false;
+                    }
                 }
                 else
                 {
-                    anim.CrossFade("landing" + Parsers.SplitString(6,anim.CurrentAnimationName));
-                }
-
-                Jumps = Peram.JumpCount;
-                AirTime = 0;
-                Landed = true;
-
-                if (TurnWhenFinished)
-                {
-                    Gdir *= -1;
-                    TurnWhenFinished = false;
+                    anim.CrossFade("downboundu");
                 }
             }
+
+            Jumps = Peram.JumpCount;
+            AirTime = 0;
+            Landed = true;
         }
 
         public virtual void Jump()
@@ -255,7 +289,7 @@ namespace Smash.Game.Fighter
                 {
                     anim.CrossFade("fallf", 100, false, false);
                 }
-                else if(input.Cdir == -Gdir)
+                else if (input.Cdir == -Gdir)
                 {
                     anim.CrossFade("fallb", 100, false, false);
                 }
@@ -269,13 +303,13 @@ namespace Smash.Game.Fighter
         public void Landing()
         {
             WhenFinishedGoTo("wait1");
-            
+
             if (anim.CurrentKeyIndex > 3)
             {
                 DetectWalk();
             }
 
-            phy.MoveX(0,3);
+            phy.MoveX(0, 3);
 
             DetectDash();
 
@@ -292,7 +326,7 @@ namespace Smash.Game.Fighter
                 }
                 else
                 {
-                    Dash("turndash",true);
+                    Dash("turndash", true);
                 }
             }
         }
@@ -303,23 +337,23 @@ namespace Smash.Game.Fighter
             {
                 anim.CrossFade("turn");
 
-                phy.MoveX(input.Cdir,5);
+                phy.MoveX(input.Cdir, 5);
             }
 
             if (input.Cdir == Gdir && !input.Cdir.Tapped)
             {
-                anim.CrossFade("walkslow",100);
+                anim.CrossFade("walkslow", 100);
             }
         }
 
-        public void Dash(string name,bool turn = false)
+        public void Dash(string name, bool turn = false)
         {
             if (turn)
                 phy.Velocity.X = -Gdir * Peram.DashSpeed;
             else
                 phy.Velocity.X = Gdir * Peram.DashSpeed;
 
-            anim.CrossFade(name,0,true);
+            anim.CrossFade(name, 0, true);
         }
 
         float RunStopTimer = 0;
@@ -334,7 +368,7 @@ namespace Smash.Game.Fighter
             if (anim.CurrentKeyIndex < 3)
             {
                 if (input.Cdir == -Gdir)
-                anim.CrossFade("turnrun");
+                    anim.CrossFade("turnrun");
             }
             else
             {
@@ -358,15 +392,15 @@ namespace Smash.Game.Fighter
             }
             else if (Math.Abs(input.Cdir.Value) < 0.3f)
             {
-                anim.CrossFade("walkslow",100);
+                anim.CrossFade("walkslow", 100);
             }
             else if (Math.Abs(input.Cdir.Value) >= 0.3f && Math.Abs(input.Cdir.Value) <= 0.7f)
             {
-                anim.CrossFade("walkmiddle",100);
+                anim.CrossFade("walkmiddle", 100);
             }
             else if (Math.Abs(input.Cdir.Value) > 0.7f)
             {
-                anim.CrossFade("walkfast",100);
+                anim.CrossFade("walkfast", 100);
             }
 
             MoveInAnimation();
@@ -374,7 +408,7 @@ namespace Smash.Game.Fighter
             DetectDash();
 
             if (input.Cdir == -Gdir)
-                Dash("turndash",true);
+                Dash("turndash", true);
 
             DetectMoveFall("walk");
 
@@ -388,7 +422,7 @@ namespace Smash.Game.Fighter
 
         public void RunFall() //change to move falll?
         {
-            WhenFinishedGoTo("fall",10);
+            WhenFinishedGoTo("fall", 10);
         }
 
         public void DetectMoveFall(string name = "run")
@@ -437,13 +471,23 @@ namespace Smash.Game.Fighter
 
         public virtual void AttackAir()
         {
-            WhenFinishedGoTo("fall");            
+            WhenFinishedGoTo("fall");
         }
 
-        public void AttackA(string name,bool force = true)
+        public void ReleaseLedge()
+        {
+            if (HoldingLedge)
+            {
+                HeldLedge.Release();
+            }
+        }
+
+        public void AttackA(string name, bool force = true)
         {
             if (!InAttack || force)
             {
+                ReleaseLedge();
+
                 input.AttackController.KillBuffer();
                 input.AButton.EndBuffer();
 
@@ -454,6 +498,8 @@ namespace Smash.Game.Fighter
                 Attacked = true;
 
                 ExistingQue = new Dictionary<int, Hitbox[]>();
+
+                ResetExclusionQue();
             }
         }
 
@@ -476,7 +522,7 @@ namespace Smash.Game.Fighter
             WhenFinishedGoTo("wait1");
         }
 
-        public void DetectCatch(string name = "catch",bool turn = false)
+        public void DetectCatch(string name = "catch", bool turn = false)
         {
             if (input.CatchButton.Buffered)
             {
@@ -489,9 +535,9 @@ namespace Smash.Game.Fighter
             }
         }
 
-        public void Catch(float slow = 5,bool turn = false)
+        public void Catch(float slow = 5, bool turn = false)
         {
-            WhenFinishedGoTo("wait1",0,turn);
+            WhenFinishedGoTo("wait1", 0, turn);
 
             MoveInAnimation();
 
@@ -503,6 +549,53 @@ namespace Smash.Game.Fighter
             if (input.Ydir.Value < -0.5f)
             {
                 anim.CrossFade("squat");
+            }
+        }
+
+        public virtual void DownBound()
+        {
+            phy.Velocity.X = 0;
+
+            WhenFinishedGoTo("downwait" + anim.CurrentAnimationName[anim.CurrentAnimationName.Length - 1]);
+        }
+
+        public virtual void DownWait()
+        {
+            phy.MoveX(0,5);
+
+            WhenFinishedGoTo("downstand" + anim.CurrentAnimationName[anim.CurrentAnimationName.Length - 1]);
+        }
+
+        public virtual void DownStand()
+        {
+            WhenFinishedGoTo("wait1");
+        }
+
+        public void InitSlowTurn(int framecount = 10)
+        {
+            st = 1;
+            slowturnspeed = framecount;
+        }
+
+        float slowturnspeed;
+        float st { get; set; } = -1f;
+        bool SlowTurning => st > -1;
+        public virtual void SlowTurn()
+        {
+            st -= (FinalSpeed / slowturnspeed) * 2;
+
+            if (Peram.TurnMode == 1)
+                skeleton.GetNode("Rot").LocalRotation = Quaternion.FromAxisAngle(Vector3.UnitY, MathHelper.DegreesToRadians((st * 90) - 90));
+            else
+                skeleton.GetNode("Rot").LocalRotation = Quaternion.FromAxisAngle(Vector3.UnitY, MathHelper.DegreesToRadians((st * 45) - 90));
+
+            anim.OverrideNode("Rot");
+
+            if (st < -1)
+            {
+                skeleton.GetNode("Rot").LocalRotation = Quaternion.Identity;
+
+                Gdir *= -1;
             }
         }
     }

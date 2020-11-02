@@ -21,7 +21,7 @@ namespace Smash.GraphicWrangler
 
         public override void GLDraw()
         {
-            BindedSkeleton.BindToMaterial(Material, 1);
+            BindedSkeleton.BindToMaterial(Material);
 
             if (Name.Contains("Eye"))
             {

@@ -1,8 +1,10 @@
 ﻿using OpenTK;
 using SimpleGameEngine.Graphics;
 using SimpleGameEngine.IO.Collada.Scene;
+using Smash.Game.Fighter.Particals;
 using Smash.Game.Input;
 using Smash.Game.Interaction;
+using Smash.GraphicWrangler;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,8 +36,6 @@ namespace Smash.Game.Fighter
 
         public float HitLag { get; set; }
         public bool InHitLag => HitLag > 0;
-
-        bool Grabbed = false;
 
         public Hitbox hit;
         Vector2 Point;
@@ -78,11 +78,13 @@ namespace Smash.Game.Fighter
                 }
 
                 hit.fRef.GeneralSpeed = 0;
+
+                Damage += hit.GetObject<float>("Damage");
+
+                RenderCamera.MainCamera.Shake(hit.GetObject<int>("HitLag")/10f);
             }
             else
             {
-                Grabbed = true;
-
                 CFighter = hit.fRef;
             }
         }
@@ -104,11 +106,15 @@ namespace Smash.Game.Fighter
 
                 InHitStun = true;
 
+                TumbleTime = 0;
+
+                ReleaseLedge();
+
                 if (HitLag < 0)
                 {
                     skeleton.RootNode.LocalPosition = new Vector3(Point);
 
-                    float distance = GetDamageDistance(hit.GetObject<float>("KB"));
+                    float distance = (Damage * hit.GetObject<float>("KBMult")) + hit.GetObject<float>("BKB");
 
                     if (distance < 5)
                     {
@@ -118,10 +124,10 @@ namespace Smash.Game.Fighter
 
                         phy.Velocity.Y = 0;
 
-                        phy.MoveX(attract.X, 2);
+                        phy.Velocity.X = attract.X/10f;
 
                         if (!hit.fRef.phy.Grounded)
-                        phy.MoveY(attract.Y, 2);
+                            phy.Velocity.Y = attract.Y/10f;
                     }
                     else
                     {
@@ -137,6 +143,9 @@ namespace Smash.Game.Fighter
                 DamageFlySlow();
             }
         }
+
+
+        public bool PosY;
 
         public void Launch(float angle, float distance)
         {
@@ -166,7 +175,9 @@ namespace Smash.Game.Fighter
 
             InDamageFly = true;
 
-            if (Math.Abs(FlightPathPlugIn.X) > Math.Abs(FlightPathPlugIn.Y))
+            PosY = vel.Y >= 0;
+
+            if (Math.Abs(vel.X) > Math.Abs(vel.Y))
                 launchMajor = LaunchMajor.MajorX;
             else
                 launchMajor = LaunchMajor.MajorY;
@@ -176,7 +187,7 @@ namespace Smash.Game.Fighter
             phy.Velocity = vel;
         }
 
-        public Vector2 GetDirection(float angle)
+        public static Vector2 GetDirection(float angle)
         {
             return new Vector2((float)Math.Sin(angle), (float)Math.Cos(angle));
         }
@@ -191,7 +202,9 @@ namespace Smash.Game.Fighter
             return (new Vector3(LaunchPosition) + new Vector3(i * LaunchDir, FlightPathPosition(i, FlightPathPlugIn), 0));
         }
 
-        public bool DoneDamageFly => (launchMajor == LaunchMajor.MajorX && Math.Abs(phy.Velocity.X) < 0.5f) || (launchMajor == LaunchMajor.MajorY && Math.Abs(phy.Velocity.Y) < 0.5f);
+        public bool DoneDamageFly => phy.Velocity.Length < 1/(DamageFlyDrag/7); 
+
+        public float TumbleTime = 0;
 
         public void DamageFlySlow()
         {
@@ -204,6 +217,8 @@ namespace Smash.Game.Fighter
                 case "damageflyroll": DamageFlyTurn(phy.Velocity); break;
                 case "damageflyn": anim.PauseInAnimation(15); break;
             }
+
+            TumbleTime += FinalSpeed;
 
             if (DoneDamageFly)
             {

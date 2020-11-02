@@ -5,7 +5,17 @@ using System;
 
 namespace SimpleGameEngine.Graphics
 {
-    public unsafe class UniformBufferObject
+    public class UBOTrash : Garbage
+    {
+        public int UBO;
+
+        public override void Dispose()
+        {
+            GL.DeleteBuffer(UBO);
+        }
+    }
+
+    public unsafe class UniformBufferObject 
     {
         public string Name { get; private set; }
         public byte[] Data { get; set; }
@@ -34,8 +44,11 @@ namespace SimpleGameEngine.Graphics
             GL.BufferData(BufferTarget.UniformBuffer, Data.Length, Data, BufferUsageHint.StaticDraw);
         }
 
-        public void BindToMaterial(RenderMaterial material,int index = 0)
+        public void BindToMaterial(RenderMaterial material)
         {
+            if (material == null)
+                return;
+
             if (material.RenderShader == null)
                 return;
 
@@ -45,15 +58,17 @@ namespace SimpleGameEngine.Graphics
                 return;
 
             GL.BindBufferBase(BufferRangeTarget.UniformBuffer, blockindex, Handler);
-            material.UniformInt(Name, blockindex);
-            GL.UniformBlockBinding(material.RenderShader.Handler,blockindex,index);
+            GL.UniformBlockBinding(material.RenderShader.Handler,blockindex, blockindex);
         }
 
         ~UniformBufferObject()
         {
             if (Window.Active && Handler != -1)
             {
-                GL.DeleteBuffer(Handler);
+                new UBOTrash()
+                {
+                    UBO = Handler
+                };
             }
         }
     }

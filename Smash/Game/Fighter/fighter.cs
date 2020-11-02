@@ -12,12 +12,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Smash.IO;
 using SimpleGameEngine.IO.Collada.Scene;
+using SimpleGameEngine.Graphics;
 
 namespace Smash.Game.Fighter
 {
     public partial class fighter : SceneObject //Main Fighter 
     {
         public List<float> ItemAffectSpeed { get; set; } = new List<float>();
+        public float Damage { get; set; } = 0;
         public int Gdir { get; set; } = 1;
         public SimplePhysics phy { get; set; }
         public FighterInput input { get; set; }
@@ -27,6 +29,11 @@ namespace Smash.Game.Fighter
         public bool HoldingLedge => HeldLedge != null;
         public XMLFile peramfile { get; set; }
         public bool Caught { get; set; }
+        public TransformNode RootNode => skeleton.RootNode;
+        public FighterScreenData FighterData { get; set; }
+        public float Weight = 98;
+
+        public bool AccountCamera;
         public float FinalSpeed
         {
             get
@@ -42,9 +49,11 @@ namespace Smash.Game.Fighter
             }
         }
 
+        int cc = 1;
+
         public override void Update()
         {
-            if (!MaterialTesting)
+            if (!MaterialTesting && !Dead)
             {
                 if (!setup)
                     SetUp();
@@ -65,11 +74,34 @@ namespace Smash.Game.Fighter
                 DamageMain();
 
                 AttackMain();
+
+                if (!Dead)
+                {
+                    DrawFighter();
+                }
+
+                FighterData.Update();
             }
 
-            DrawFighter();
+            anim.AnimationChange = false;
 
-            anim.AnimationChange = false;            
+            UpdateParticals();
+
+            AccountCamera = true;
+
+            DeathHandeling();
+        }
+
+        public void DeathHandeling()
+        {
+            if (Dead)
+            {
+                RespawnTime -= FinalSpeed;
+
+                skeleton.RootNode.LocalPosition = new OpenTK.Vector3(0, 100, 0);
+
+                AccountCamera = false;
+            }
         }
 
         public void FighterCollision()
@@ -84,11 +116,11 @@ namespace Smash.Game.Fighter
                     {
                         if (f.phy.Transform.LocalPosition.X < phy.Transform.LocalPosition.X)
                         {
-                            phy.MoveX(0.1f,2);
+                            //phy.MoveX(0.1f,2);
                         }
                         else
                         {
-                            phy.MoveX(-0.1f, 2);
+                            //phy.MoveX(-0.1f, 2);
                         }
                     }
                 }
@@ -117,11 +149,32 @@ namespace Smash.Game.Fighter
             }
 
             phy.CollisionCapsule = new Physics.Shapes.Capsule2D(10,20);
+
+            FighterData = new FighterScreenData(this);
         }
 
         public void LoadPerams()
         {
 
+        }
+
+        float CameraLock;
+
+        float RespawnTime;
+
+        public bool Dead => RespawnTime > 0;
+
+        public void Kill()
+        {
+            CreateKillParticals();
+
+            RespawnTime = 200;
+
+            InDamageFly = false;
+            skeleton.RootNode.LocalPosition = new OpenTK.Vector3(0,100,0);
+            Damage = 0;
+            phy.Velocity = new OpenTK.Vector2(0,0);
+            InHitStun = false;
         }
     }
 }

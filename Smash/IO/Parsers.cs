@@ -2,6 +2,7 @@
 using OpenTK.Graphics.OpenGL;
 using SimpleGameEngine.Graphics.Assets;
 using SimpleGameEngine.Graphics.Structs;
+using SimpleGameEngine.IO.Collada;
 using Smash.Game;
 using Smash.GraphicWrangler;
 using SmashLabs.IO;
@@ -199,6 +200,8 @@ namespace Smash.IO
                 }
             }
 
+            Out.SetIdentities();
+
             return Out;
         }
 
@@ -226,6 +229,18 @@ namespace Smash.IO
             RenderTexture2D Out = new RenderTexture2D(BitmapFromBuffer(Data));
 
             return Out;
+        }
+
+        public unsafe static RenderTexture2D LoadRawTexture(byte[] Data)
+        {
+            fixed (byte* data = Data)
+            {
+                UnmanagedMemoryStream str = new UnmanagedMemoryStream(data, Data.Length);
+
+                Bitmap Out = new Bitmap(str);
+
+                return new RenderTexture2D(Out);
+            }
         }
 
         public unsafe static Bitmap BitmapFromBuffer(byte[] Data)
@@ -396,6 +411,25 @@ namespace Smash.IO
             }
 
             return Out;
+        }
+
+        public static RenderModel LoadCollada(ColladaFile file)
+        {
+            RenderModel Out = new RenderModel();
+
+            return Out;
+        }
+
+
+        static Dictionary<string, RenderFont> FontBuffer = new Dictionary<string, RenderFont>();
+        public static RenderFont LoadFont(string fontfolder)
+        {
+            if (!FontBuffer.ContainsKey(fontfolder))
+            {
+                FontBuffer.Add(fontfolder, new RenderFont(LoadRawTexture(FileLoader.ReadFileBytes(fontfolder + "\\font.png")), FileLoader.ReadWholeFile(fontfolder + "\\font.fnt")));
+            }
+
+            return FontBuffer[fontfolder];
         }
     }
 }

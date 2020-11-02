@@ -26,6 +26,9 @@ namespace SimpleGameEngine.Graphics.Assets
             SetMag(TextureMagFilter.Linear);
 
             CreateMips();
+
+            Width = map.Width;
+            Height = map.Height;
         }
 
         public override void Bind()

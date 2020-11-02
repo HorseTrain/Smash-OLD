@@ -195,6 +195,11 @@ namespace Smash.Game.Physics
             Velocity.Y += (speed - Velocity.Y) / (lerp / (float)FighterRef.FinalSpeed);
         }
 
+        public void Move(Vector2 vel, float lerp = 1)
+        {
+            Velocity += (vel - Velocity) / (lerp / (float)FighterRef.FinalSpeed);
+        }
+
         public void Init()
         {
             Transform.LocalPosition += new Vector3(Velocity.X, Velocity.Y, 0) * FighterRef.FinalSpeed;
@@ -289,6 +294,8 @@ namespace Smash.Game.Physics
                 return false;
             }
         }
+
+        public bool Ottotto => !GlobalIntersectionTest(new Line2D(Transform.LocalPosition.Xy + new Vector2(FighterRef.Gdir * 2, 1), Transform.LocalPosition.Xy + new Vector2(FighterRef.Gdir * 2, -0.1f))).Valid;
 
         public void HugLedge()
         {

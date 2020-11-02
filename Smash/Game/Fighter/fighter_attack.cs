@@ -17,14 +17,32 @@ namespace Smash.Game.Fighter
         public bool InAttack { get; set; } = false;
         bool Attacked { get; set; }
 
+        public List<fighter>[] FighterHitExclusion;
+
+        public void ResetExclusionQue()
+        {
+            FighterHitExclusion = new List<fighter>[100];
+
+            for (int i = 0; i < FighterHitExclusion.Length; i++)
+            {
+                FighterHitExclusion[i] = new List<fighter>();
+            }
+        }
+
         public void AttackMain()
         {            
             if (anim.AnimationChange)
             {
+                ResetExclusionQue();
+
                 ExistingQue = new Dictionary<int, Hitbox[]>();
 
+                //HitLayers = new HashSet<int>();
+
                 if (!Attacked)
-                InAttack = false;
+                {
+                    InAttack = false;
+                }
             }
 
             DestroyAllHitBoxes = anim.AnimationChange;
@@ -49,7 +67,7 @@ namespace Smash.Game.Fighter
             {
                 if (phy.Grounded)
                 {
-                    if (anim.CurrentAnimationName != "jumpsquat")
+                    if (anim.CurrentAnimationName != "jumpsquat" && phy.Velocity.Y <= 0)
                     {
                         if (bufferedg != ControllerDirection.Null)
                         {
@@ -109,21 +127,21 @@ namespace Smash.Game.Fighter
             }
         }
 
-        public void CreateHitboxAtTime(int frame,Dictionary<string,object> Data,int ID,HitboxType Type = HitboxType.Attack)
+        public void CreateHitboxAtTime(int frame,Dictionary<string,object> Data,int ID,HitboxType Type = HitboxType.Attack,int HitboxLayer = -1)
         {
             if (anim.CurrentKeyIndex == frame)
             {
-                CreateHitbox(Data,ID,Type);
+                CreateHitbox(Data,ID,Type, HitboxLayer);
             }
         }
 
-        public Hitbox CreateHitbox(Dictionary<string,object> Data,int ID,HitboxType Type = HitboxType.Attack)
+        public Hitbox CreateHitbox(Dictionary<string,object> Data,int ID,HitboxType Type,int HLayer)
         {
             int frame = anim.CurrentKeyIndex;
 
             if (!ExistingQue.ContainsKey(frame))
             {
-                ExistingQue.Add(frame,new Hitbox[20]);
+                ExistingQue.Add(frame,new Hitbox[100]);
             }
 
             if (ExistingQue[frame][ID] == null)
@@ -133,7 +151,7 @@ namespace Smash.Game.Fighter
                 Out.fRef = this;
 
                 Out.Data = Data;
-                Out.SetUp(Type);
+                Out.SetUp(Type, HLayer);
 
                 ExistingQue[frame][ID] = Out;
             }
@@ -173,6 +191,8 @@ namespace Smash.Game.Fighter
         public void DamageN()
         {
             WhenFinishedGoTo("wait1");
+
+            phy.MoveX(0,5);
         }
 
         public void GroundAttack(string endname = "wait1")

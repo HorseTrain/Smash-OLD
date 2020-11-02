@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30503.244
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smash", "Smash\Smash.csproj", "{CF17CDE5-5A0B-496C-BD59-53DAF1C803E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleGameEngineGraphics", "SimpleGameEngine\SimpleGameEngineGraphics.csproj", "{118F5BC3-C97B-4F76-AA68-E425642C440C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleGameEngine", "SimpleGameEngine\SimpleGameEngine.csproj", "{118F5BC3-C97B-4F76-AA68-E425642C440C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exporter", "Exporter\Exporter.csproj", "{3ABC7FEF-50BF-4503-A54B-4F3FE5FCFA09}"
 EndProject

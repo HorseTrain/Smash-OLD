@@ -3,6 +3,7 @@ using OpenTK.Graphics.OpenGL;
 using System;
 using System.Runtime.InteropServices;
 using OpenTK;
+using System.Collections.Generic;
 
 namespace SimpleGameEngine.Graphics.Assets
 {
@@ -97,37 +98,47 @@ namespace SimpleGameEngine.Graphics.Assets
             }
         }
 
+        public static Dictionary<string, RenderMesh> GlobalMeshes = new Dictionary<string, RenderMesh>();
+
         public static RenderMesh Quad
         {
             get
             {
-                RenderMesh Out = new RenderMesh();
-
-                Out.RenderMode = BeginMode.Quads;
-
-                Out.VertexData = new RenderVertex[]
+                if (!GlobalMeshes.ContainsKey("Quad"))
                 {
-                    new RenderVertex()
-                    {
-                        VertexPosition = new OpenTK.Vector3(0,0,0) - new OpenTK.Vector3(0.5f)
-                    },
-                    new RenderVertex()
-                    {
-                        VertexPosition = new OpenTK.Vector3(1,0,0) - new OpenTK.Vector3(0.5f)
-                    },
-                    new RenderVertex()
-                    {
-                        VertexPosition = new OpenTK.Vector3(1,1,0) - new OpenTK.Vector3(0.5f)
-                    },
-                    new RenderVertex()
-                    {
-                        VertexPosition = new OpenTK.Vector3(0,1,0) - new OpenTK.Vector3(0.5f)
-                    }
-                };
+                    RenderMesh Out = new RenderMesh();
 
-                Out.IndexData = new ushort[] {0,1,2,3};
+                    Out.RenderMode = BeginMode.Quads;
 
-                return Out;
+                    Out.VertexData = new RenderVertex[]
+                    {
+                        new RenderVertex()
+                        {
+                            VertexPosition = new Vector3(0,0,0)
+                        },
+
+                        new RenderVertex()
+                        {
+                            VertexPosition = new Vector3(1,0,0)
+                        },
+
+                        new RenderVertex()
+                        {
+                            VertexPosition = new Vector3(1,1,0)
+                        },
+
+                        new RenderVertex()
+                        {
+                            VertexPosition = new Vector3(0,1,0)
+                        }
+                    };
+
+                    Out.IndexData = new ushort[] { 0, 1, 2, 3 };
+
+                    GlobalMeshes.Add("Quad", Out);
+                }
+
+                return GlobalMeshes["Quad"];
             }
         }
 

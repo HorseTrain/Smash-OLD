@@ -13,11 +13,17 @@ namespace Smash
     {
         static void Main(string[] args)
         {
-            Exporter.Program.Main(null);
+            //Exporter.Program.Main(null);
 
-            args = new string[] { "fox","yoshi" };
+            FileLoader.RootPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)+ @"\Assets\";
+
+            Console.WriteLine("Make sure you exit out of Steam for Controller Support. :)");
+
+            //Console.WriteLine(FileLoader.RootPath);
+
+            args = new string[] { "pit", "mario"};
             
-            Scene.LoadQue = args;        
+            Scene.LoadQue = args;      
 
             SmashWindow window = new SmashWindow();
 

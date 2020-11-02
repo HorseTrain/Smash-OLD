@@ -9,10 +9,22 @@ using System.Threading.Tasks;
 
 namespace SimpleGameEngine.Graphics.Assets
 {
+    public class TextureTrash : Garbage
+    {
+        public int ID;
+
+        public override void Dispose()
+        {
+            GL.DeleteTexture(ID);
+        }
+    }
+
     public class Texture
     {
         public int Handler { get; private set; } = -1;
         public bool Loaded => Handler != -1;
+        public int Width { get; set; }
+        public int Height { get; set; }
 
         public Texture()
         {
@@ -63,7 +75,10 @@ namespace SimpleGameEngine.Graphics.Assets
         {
             if (Loaded && Window.Active)
             {
-                //GL.DeleteTexture(Handler);
+                new TextureTrash()
+                {
+                    ID = Handler
+                };
             }
         }
 

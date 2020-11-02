@@ -71,9 +71,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SimpleGameEngine\SimpleGameEngineGraphics.csproj">
+    <ProjectReference Include="..\SimpleGameEngine\SimpleGameEngine.csproj">
       <Project>{118f5bc3-c97b-4f76-aa68-e425642c440c}</Project>
-      <Name>SimpleGameEngineGraphics</Name>
+      <Name>SimpleGameEngine</Name>
     </ProjectReference>
     <ProjectReference Include="..\SmashLabs\SmashLabs.csproj">
       <Project>{35664f18-b90d-46ee-989c-1e0e1824b314}</Project>

@@ -56,21 +56,21 @@ namespace Smash.Game.Fighter.fighter_s
         {
             base.anm_attackend();
 
-            CreateHitboxAtTime(3, new Dictionary<string, object>() { { "Bone", "Trans" }, { "Y", 7f }, { "Z", 13.0f }, { "Size", 4f }, { "EndTime", 1 }, { "HitLag", 20 },{"KB",30f},{ "Angle",60f} }, 0);
+            CreateHitboxAtTime(3, new Dictionary<string, object>() { { "Bone", "Trans" }, { "Y", 7f }, { "Z", 13.0f }, { "Size", 4f }, { "EndTime", 1 }, { "HitLag", 20 },{"BKB",30f},{ "Angle",60f} }, 0);
         }
 
         public override void anm_attacklw3()
         {
             base.anm_attacklw3();
 
-            CreateHitboxAtTime(6, new Dictionary<string, object>() { { "Bone", "Trans" }, { "Y",2f},{ "Z",6f},{ "Size", 5f }, { "EndTime", 5 }, { "HitLag", 10 }, { "KB", 20f }, { "Angle", 10f } }, 0);
+            CreateHitboxAtTime(6, new Dictionary<string, object>() { { "Bone", "Trans" }, { "Y",2f},{ "Z",6f},{ "Size", 5f }, { "EndTime", 5 }, { "HitLag", 10 }, { "BKB", 20f }, { "Angle", 10f } }, 0);
         }
 
         public override void anm_attackhi3()
         {
             base.anm_attackhi3();
 
-            CreateHitboxAtTime(1, new Dictionary<string, object>() { { "Bone", "ToeR" }, { "Size", 5f }, { "EndTime", 5 }, { "HitLag", 5 }, { "KB", 20f }, { "Angle", 0f } }, 0);
+            CreateHitboxAtTime(1, new Dictionary<string, object>() { { "Bone", "ToeR" }, { "Size", 5f }, { "EndTime", 5 }, { "HitLag", 5 }, { "BKB", 20f }, { "Angle", 0f } }, 0);
 
             EndAttack(20);
         }
@@ -79,7 +79,7 @@ namespace Smash.Game.Fighter.fighter_s
         {
             base.anm_attacks3s();
 
-            CreateHitboxAtTime(5, new Dictionary<string, object>() { { "Bone", "Trans" }, { "Y", 7.5f }, { "Z", 8f }, { "Size", 4.5f }, { "EndTime", 3 }, { "HitLag", 5 }, { "KB", 10f }, { "Angle", 60f } }, 0);
+            CreateHitboxAtTime(5, new Dictionary<string, object>() { { "Bone", "Trans" }, { "Y", 7.5f }, { "Z", 8f }, { "Size", 4.5f }, { "EndTime", 3 }, { "HitLag", 5 }, { "BKB", 10f }, { "Angle", 60f } }, 0);
 
             EndAttack(9);
         }
@@ -98,7 +98,7 @@ namespace Smash.Game.Fighter.fighter_s
             for (int i = 6; i < 26; i += 5)
             CreateHitboxAtTime(i, new Dictionary<string, object>() { { "Bone", "Trans" }, { "Y", 7f }, { "Z", 10.0f }, { "Size", 5f }, { "EndTime", 1 }, { "HitLag", 2 } }, 0);
 
-            CreateHitboxAtTime(27, new Dictionary<string, object>() { { "Bone", "Trans" }, { "Y", 7f }, { "Z", 10.0f }, { "Size", 5f }, { "EndTime", 1 }, { "HitLag", 10 },{ "Angle",60f},{ "KB",20f} }, 0);
+            CreateHitboxAtTime(27, new Dictionary<string, object>() { { "Bone", "Trans" }, { "Y", 7f }, { "Z", 10.0f }, { "Size", 5f }, { "EndTime", 1 }, { "HitLag", 10 },{ "Angle",60f},{ "BKB", 20f} }, 0);
 
             EndAttack(45);
         }
@@ -106,7 +106,7 @@ namespace Smash.Game.Fighter.fighter_s
         {
             base.anm_attackairb();
 
-            CreateHitboxAtTime(8, new Dictionary<string, object>() { { "Bone", "Trans" }, { "Y", 7f }, { "Z", -10f }, { "Size", 5f }, { "EndTime", 1 }, { "HitLag",10 },{ "Angle",-60f},{ "KB",20f} }, 0);
+            CreateHitboxAtTime(8, new Dictionary<string, object>() { { "Bone", "Trans" }, { "Y", 7f }, { "Z", -10f }, { "Size", 5f }, { "EndTime", 1 }, { "HitLag",10 },{ "Angle",-60f},{ "BKB", 20f} }, 0);
 
             EndAttack(18);
         }
@@ -115,7 +115,7 @@ namespace Smash.Game.Fighter.fighter_s
         {
             base.anm_attackdash();
 
-            CreateHitboxAtTime(6, new Dictionary<string, object>() { { "Bone", "Trans" }, { "Y", 4f }, { "Z", 4f }, { "Size", 6f }, { "EndTime", 8 }, { "HitLag", 3 },{ "Angle",40f},{ "KB",30f} }, 0);
+            CreateHitboxAtTime(6, new Dictionary<string, object>() { { "Bone", "Trans" }, { "Y", 4f }, { "Z", 4f }, { "Size", 6f }, { "EndTime", 8 }, { "HitLag", 3 },{ "Angle",40f},{ "BKB", 30f} }, 0);
         }
 
 

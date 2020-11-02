@@ -11,18 +11,17 @@ using System.Threading.Tasks;
 
 namespace Smash.GraphicWrangler
 {
-    public unsafe class IRenderable
+    public unsafe class IRenderable 
     {
         public static FrameBufferObject MainFrameBuffer { get; set; }
 
-        public static UniformBufferObject SceneBuffer { get; set; } = new UniformBufferObject("SceneBuffer",1000 * sizeof(Matrix4));
+        public static UniformBufferObject SceneBuffer { get; set; } = new UniformBufferObject("SceneBuffer",100 * sizeof(Matrix4));
         public static List<IRenderable> DrawQue { get; set; } = new List<IRenderable>();
         public bool Active { get; set; } = true;
         public string Name { get; set; }
         public SmashMaterial Material { get; set; } = new SmashMaterial();
         public CullFaceMode CullMode { get; set; } = CullFaceMode.Back;
 
-        static bool Started = false;
         public static void IRenderableBegin()
         {
 
@@ -30,7 +29,7 @@ namespace Smash.GraphicWrangler
 
         public void Draw()
         {
-            if (Active)
+            if (Active && Material != null)
             DrawQue.Add(this);
         }
 

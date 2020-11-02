@@ -1,5 +1,6 @@
 ﻿using OpenTK;
 using SimpleGameEngine.Graphics;
+using Smash.Game.Fighter.Particals;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -2320,6 +2321,8 @@ namespace Smash.Game.Fighter
             phy.MoveX(0,5);
 
             DetectCatch();
+
+            phy.HugLedge();
         }
 
         public virtual void anm_jumpaerialb()
@@ -2358,7 +2361,9 @@ namespace Smash.Game.Fighter
                 else
                 {
                     anim.CrossFade("jumpb");
-                }    
+                }
+
+                LandJumpParticals();
             }
 
             if (input.Cdir == 0)
@@ -2562,12 +2567,18 @@ namespace Smash.Game.Fighter
         {
             InAttack = true;
 
-            GroundAttack();
+            if (anim.FinishedAnimation)
+            {
+                AttackA("attackend",true);
+            }
         }
 
         public virtual void anm_attack100start()
         {
-            WhenFinishedGoTo("attack100");
+            if (anim.FinishedAnimation)
+            {
+                AttackA("attack100",true);
+            }
         }
 
         public virtual void anm_attack11()
@@ -3196,7 +3207,7 @@ namespace Smash.Game.Fighter
 
         public virtual void anm_downboundu()
         {
-
+            DownBound();
         }
 
         public virtual void anm_downdamageu()
@@ -3221,12 +3232,12 @@ namespace Smash.Game.Fighter
 
         public virtual void anm_downstandu()
         {
-
+            DownStand();
         }
 
         public virtual void anm_downwaitu()
         {
-
+            DownWait();
         }
 
         public virtual void anm_downattackd()
@@ -3241,7 +3252,7 @@ namespace Smash.Game.Fighter
 
         public virtual void anm_downboundd()
         {
-
+            DownBound();
         }
 
         public virtual void anm_downdamaged()
@@ -3271,12 +3282,12 @@ namespace Smash.Game.Fighter
 
         public virtual void anm_downstandd()
         {
-
+            DownStand();
         }
 
         public virtual void anm_downwaitd()
         {
-
+            DownWait();
         }
 
         public virtual void anm_passive()
@@ -3361,12 +3372,19 @@ namespace Smash.Game.Fighter
 
         public virtual void anm_ottotto()
         {
+            Wait();
 
+            WhenFinishedGoTo("ottottowait");
         }
 
         public virtual void anm_ottottowait()
         {
+            Wait();
 
+            if (!phy.Ottotto)
+            {
+                anim.CrossFade("wait1",20);
+            }
         }
 
         public virtual void anm_pass()

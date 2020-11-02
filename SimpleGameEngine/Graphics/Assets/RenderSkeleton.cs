@@ -4,6 +4,7 @@ using SimpleGameEngine.IO.Collada.Scene;
 using SimpleGameEngine.IO.XML;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -119,6 +120,7 @@ namespace SimpleGameEngine.Graphics.Assets
         public UniformBufferObject UniformBuffer { get; set; } = new UniformBufferObject("SkeletonBuffer", 300 * sizeof(Matrix4));
         public TransformNode RootNode { get; set; }
         public TransformNode[] Nodes { get; set; }
+        Matrix4[] Identities { get; set; }
         public Matrix4[] InverseWorldTransforms { get; set; }
         public Matrix4[] WorldTransformCache { get; set; }
         Dictionary<string, TransformNode> NodeKeys { get; set; }
@@ -130,6 +132,17 @@ namespace SimpleGameEngine.Graphics.Assets
 
             RootNode.LocalRotation = Quaternion.FromAxisAngle(Vector3.UnitY, MathHelper.DegreesToRadians(-90));
         }
+
+        public void SetIdentities()
+        {
+            Identities = new Matrix4[Nodes.Length];
+
+            for (int i = 0; i < Identities.Length; i++)
+            {
+                Identities[i] = Nodes[i].LocalTransform;
+            }
+        }
+
         public void BuildKeys()
         {
             NodeKeys = new Dictionary<string, TransformNode>();
@@ -172,9 +185,9 @@ namespace SimpleGameEngine.Graphics.Assets
             GetCullMode();
         }
 
-        public void BindToMaterial(RenderMaterial material,int index = 0)
+        public void BindToMaterial(RenderMaterial material)
         {
-            UniformBuffer.BindToMaterial(material,index);
+            UniformBuffer.BindToMaterial(material);
         }
 
         public void GetCullMode()
@@ -202,6 +215,20 @@ namespace SimpleGameEngine.Graphics.Assets
         public static void GlobalUpdate()
         {
             TransformNode.MatrixCalculationFrame++;
+        }
+
+        public void IdentitySkeleton()
+        {
+            if (Identities != null)
+            {
+                for (int i = 0; i < Identities.Length; i++)
+                    Nodes[i].LocalTransform = Identities[i];
+            }
+        }
+
+        public Matrix4 GetMatrixIdentity(string name)
+        {
+            return Identities[GetNode(name).Index];
         }
     }
 }

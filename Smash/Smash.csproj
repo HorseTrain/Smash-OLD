@@ -76,16 +76,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Game\Debug\GameStats.cs" />
     <Compile Include="Game\Fighter\fighter.cs" />
     <Compile Include="Game\Fighter\FighterPeram.cs" />
+    <Compile Include="Game\Fighter\FighterScreenData.cs" />
     <Compile Include="Game\Fighter\fighter_attack.cs" />
     <Compile Include="Game\Fighter\fighter_damage.cs" />
     <Compile Include="Game\Fighter\fighter_draw.cs" />
     <Compile Include="Game\Fighter\fighter_generic.cs" />
+    <Compile Include="Game\Fighter\fighter_particals.cs" />
     <Compile Include="Game\Fighter\fighter_scripts.cs" />
     <Compile Include="Game\Fighter\fighter_s\fox.cs" />
+    <Compile Include="Game\Fighter\fighter_s\ike.cs" />
+    <Compile Include="Game\Fighter\fighter_s\kirby.cs" />
     <Compile Include="Game\Fighter\fighter_s\mario.cs" />
+    <Compile Include="Game\Fighter\fighter_s\pit.cs" />
+    <Compile Include="Game\Fighter\fighter_s\roy.cs" />
     <Compile Include="Game\Fighter\fighter_s\tantan.cs" />
+    <Compile Include="Game\Fighter\Particals\CircleTravelPartical.cs" />
+    <Compile Include="Game\Fighter\Particals\DamageFlyPartical.cs" />
+    <Compile Include="Game\Fighter\Particals\JumpPartical.cs" />
+    <Compile Include="Game\Fighter\Particals\MoveDirPartical.cs" />
+    <Compile Include="Game\Fighter\Particals\RunPartical.cs" />
     <Compile Include="Game\Input\ControllerAxis.cs" />
     <Compile Include="Game\Input\FighterInput.cs" />
     <Compile Include="Game\Input\JoystickInput.cs" />
@@ -115,14 +127,14 @@
     <Compile Include="GraphicWrangler\IRenderable.cs" />
     <Compile Include="GraphicWrangler\MaterialObjects\ParamDataType.cs" />
     <Compile Include="GraphicWrangler\MaterialObjects\ParamID.cs" />
-    <Compile Include="GraphicWrangler\Particals\TrailParticalRenderer.cs" />
+    <Compile Include="GraphicWrangler\ParticalRenderer.cs" />
     <Compile Include="GraphicWrangler\RenderModel.cs" />
-    <Compile Include="GraphicWrangler\Shape.cs" />
-    <Compile Include="GraphicWrangler\ShapeRenderer.cs" />
     <Compile Include="GraphicWrangler\SkinnedMeshRenderer.cs" />
     <Compile Include="GraphicWrangler\SkyboxRenderer.cs" />
     <Compile Include="GraphicWrangler\SmashMaterial.cs" />
     <Compile Include="GraphicWrangler\SmashWindow.cs" />
+    <Compile Include="GraphicWrangler\TextRenderer.cs" />
+    <Compile Include="GraphicWrangler\UIImageRenderer.cs" />
     <Compile Include="IO\FileLoader.cs" />
     <Compile Include="IO\Parsers.cs" />
     <Compile Include="Program.cs" />
@@ -139,9 +151,9 @@
       <Project>{3abc7fef-50bf-4503-a54b-4f3fe5fcfa09}</Project>
       <Name>Exporter</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SimpleGameEngine\SimpleGameEngineGraphics.csproj">
+    <ProjectReference Include="..\SimpleGameEngine\SimpleGameEngine.csproj">
       <Project>{118f5bc3-c97b-4f76-aa68-e425642c440c}</Project>
-      <Name>SimpleGameEngineGraphics</Name>
+      <Name>SimpleGameEngine</Name>
     </ProjectReference>
     <ProjectReference Include="..\SmashLabs\SmashLabs.csproj">
       <Project>{35664f18-b90d-46ee-989c-1e0e1824b314}</Project>

@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using SimpleGameEngine.Graphics;
 using SimpleGameEngine.Graphics.Assets;
 using Smash.Game.Fighter;
 using Smash.Game.Scenes;
@@ -138,6 +139,8 @@ namespace Smash.GraphicWrangler
             if (!(CurrentKeyIndex < currentanimation.FrameCount))
             {
                 FinishedAnimation = true;
+
+                fighterref.skeleton.SetIdentities();
             }
 
             LerpedAnimation = false;
@@ -197,6 +200,12 @@ namespace Smash.GraphicWrangler
 
                 LerpedAnimation = true;
                 AnimationChange = true;
+
+                if (fighterref != null)
+                if (CrossTime == 0)
+                {
+                    //fighterref.skeleton.IdentitySkeleton();
+                }
             }
         }
 
