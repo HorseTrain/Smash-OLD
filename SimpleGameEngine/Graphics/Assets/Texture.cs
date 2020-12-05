@@ -81,10 +81,5 @@ namespace SimpleGameEngine.Graphics.Assets
                 };
             }
         }
-
-        public void Dispose()
-        {
-            GL.DeleteTexture(Handler);
-        }
     }
 }

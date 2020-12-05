@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using OpenTK.Graphics.OpenGL;
 using SimpleGameEngine.Graphics;
 using SimpleGameEngine.Graphics.Assets;
 using Smash.Game.Fighter;
@@ -19,128 +20,115 @@ namespace Smash.Game.Interaction
         Grab
     }
 
-    public class Hitbox : Circle2D
+    public class Hitbox 
     {
-        public static List<Hitbox> AllHitBoxes = new List<Hitbox>();
-        static List<Hitbox> DestructionQue = new List<Hitbox>();
+        public Circle2D Renderer = new Circle2D();
 
         public Dictionary<string, object> Data = new Dictionary<string, object>();
 
-        public static bool DebugDrawHitBoxes = true;
+        public Matrix4 LocalTransform => Matrix4.CreateScale(GetFloat("size")) * Matrix4.CreateTranslation(GetFloat("x"), GetFloat("y"), GetFloat("z"));
+        public Vector3 Position => (LocalTransform * Object.skeleton.GetNode(GetString("bone")).WorldTransform).ExtractTranslation();
 
-        public List<fighter> HitQue = new List<fighter>();
-
-        public float EndTime { get; set; }
-        public fighter fRef { get; set; }
-        public HitboxType Type;
         public int Layer;
 
         public Hitbox()
         {
-            AllHitBoxes.Add(this);
+            hitboxque.Add(this);
         }
 
-        public void SetUp(HitboxType Type = HitboxType.Attack, int layer = 0)
-        {
-            EndTime = GetObject<int>("EndTime");
-            R = GetObject<float>("Size");
-            this.Layer = layer;
-            this.Type = Type;
-        }
+        float endtime = 0;
 
-        public T GetObject<T>(string name)
+        SceneObject Obj;
+        public SceneObject Object { get => Obj; set { Obj = value; Obj.MyHitboxes.Add(this); } }
+
+        public int GetInt(string name)
         {
             if (Data.ContainsKey(name))
-                return (T)Data[name];
+                return (int)(double)Data[name];
             else
-                return default;
+                return 0;
+        }
+
+        public float GetFloat(string name)
+        {
+            if (Data.ContainsKey(name))
+                return (float)(double)Data[name];
+            else
+                return 0;
+        }
+
+        public string GetString(string name)
+        {
+            if (Data.ContainsKey(name))
+                return (string)Data[name];
+            else
+                return "";
         }
 
         public void Update()
         {
-            Matrix4 temp = Matrix4.CreateTranslation(new Vector3(GetObject<float>("X"), GetObject<float>("Y"), GetObject<float>("Z"))) * fRef.skeleton.GetNode(GetObject<string>("Bone")).WorldTransform;
+            if (!Data.ContainsKey("bone"))
+                Data.Add("bone","Trans");
 
-            Position = temp.ExtractTranslation().Xy;
+            endtime += Object.FinalSpeed * Object.anim.AnimationSpeed;
 
-            EndTime -= fRef.FinalSpeed;
+            Renderer.R = GetFloat("size");
 
-            if (fRef.DestroyAllHitBoxes || EndTime < 0)
+            Renderer.Position = Position.Xy;
+
+            if (endtime >= GetInt("endtime"))
             {
                 Destroy();
             }
             else
             {
-                CollisionTest();
-            }
+                TestFighterCollision();
 
-            if (DebugDrawHitBoxes)
-            {
-                Draw();
+                Renderer.Draw();
             }
         }
 
         public void Destroy()
         {
-            DestructionQue.Add(this);
+            destructionque.Add(this);
         }
 
-        public void CollisionTest()
+        List<fighter> HitQue = new List<fighter>();
+
+        public void TestFighterCollision()
         {
-            foreach (fighter f in ((ArenaScene)Scene.CurrentScene).Fighters)
+            foreach (fighter fter in ((ArenaScene)Scene.CurrentScene).Fighters)
             {
-                if (f != fRef)
+                if (fter != Object)
                 {
-                    bool CanComplete = true;
-
-                    if (Layer != -1)
+                    if (!HitQue.Contains(fter))
                     {
-                        if (fRef.FighterHitExclusion[Layer].Contains(f))
-                            CanComplete = false;
-                    }
-
-                    if (CanComplete)
-                    {
-                        if (TestCollision(f.phy.CollisionCapsule))
+                        if (Renderer.TestCollision(fter.phy.CollisionCapsule))
                         {
-                            if (!HitQue.Contains(f))
-                            {
-                                HitQue.Add(f);
-
-                                f.Hit(this);
-
-                                Console.WriteLine(Layer);
-
-                                if (Layer != -1)
-                                {
-                                    fRef.FighterHitExclusion[Layer].Add(f);
-                                }
-                            }
+                            fter.Hit(this);
                         }
-                        else
-                        {
-                            if (HitQue.Contains(f))
-                            {
-                                //HitQue.Remove(f);
-                            }
-                        }
+
+                        HitQue.Add(fter);
                     }
                 }
             }
         }
 
+        static List<Hitbox> hitboxque = new List<Hitbox>();
+        static List<Hitbox> destructionque = new List<Hitbox>();
         public static void UpdateAllHitBoxes()
         {
-            foreach (Hitbox hitbox in AllHitBoxes)
+            foreach (Hitbox hitbox in hitboxque)
             {
                 hitbox.Update();
             }
 
-            foreach (Hitbox hb in DestructionQue)
+            foreach (Hitbox hitbox in destructionque)
             {
-                AllHitBoxes.Remove(hb);
+                hitboxque.Remove(hitbox);
             }
 
-            DestructionQue = new List<Hitbox>();
+            destructionque = new List<Hitbox>();
         }
     }
 }

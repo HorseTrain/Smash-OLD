@@ -1,180 +1,155 @@
-﻿using SimpleGameEngine.Graphics.Assets;
-using SimpleGameEngine.IO.XML;
-using Smash.Game.Input;
-using Smash.Game.Physics;
-using Smash.Game.Scenes;
-using Smash.GraphicWrangler;
-using OpenTK.Graphics.OpenGL;
-using System;
+﻿using Smash.Game.Input;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Smash.IO;
-using SimpleGameEngine.IO.Collada.Scene;
-using SimpleGameEngine.Graphics;
+using System.IO;
+using OpenTK;
+using System;
+using MoonSharp.Interpreter;
+using OpenTK.Input;
+using Smash.GraphicWrangler;
+using Smash.Game.Interaction;
 
 namespace Smash.Game.Fighter
 {
-    public partial class fighter : SceneObject //Main Fighter 
+    [MoonSharpUserData]
+    public partial class fighter : SceneObject
     {
-        public List<float> ItemAffectSpeed { get; set; } = new List<float>();
-        public float Damage { get; set; } = 0;
-        public int Gdir { get; set; } = 1;
-        public SimplePhysics phy { get; set; }
-        public FighterInput input { get; set; }
-        public FighterParam Peram { get; set; } 
-        public int FighterIndex { get; set; }
-        public Ledge HeldLedge { get; set; }
-        public bool HoldingLedge => HeldLedge != null;
-        public XMLFile peramfile { get; set; }
-        public bool Caught { get; set; }
-        public TransformNode RootNode => skeleton.RootNode;
-        public FighterScreenData FighterData { get; set; }
-        public float Weight = 98;
+        public FighterInput Input { get; set; }
+        public string Name { get; set; }
 
-        public bool AccountCamera;
-        public float FinalSpeed
+        bool setup = false;
+
+        public int TurnMode = 1;
+
+        public void SetUp()
         {
-            get
+            if (!setup)
             {
-                float Out = ArenaScene.GLobalSpeed * GeneralSpeed;
+                Input = new FighterInput(this);
 
-                foreach (float f in ItemAffectSpeed)
-                {
-                    Out *= f;
-                }
+                LoadScripts();
 
-                return Out;
+                phy = new Physics.SimplePhysics(this);
+
+                setup = true;
+
+                Animators[1].CrossFade("defaulteyelid");
             }
         }
 
-        int cc = 1;
+        string GetSource(string name)
+        {
+            if (FileLoader.FileExists(@"custom\Scripts\" + Name + "\\" + name))
+            {
+                return FileLoader.ReadWholeFile(@"custom\Scripts\" + Name + "\\" + name);
+            }
+
+            return FileLoader.ReadWholeFile(@"custom\Scripts\fighter_main\" + name); ;
+        }
+
+        public void LoadScripts()
+        {
+            AnimationScripts = new Dictionary<string, ScriptObject>();
+
+            string[] Files = FileLoader.GetFiles(@"custom\Scripts\fighter_main\Animation\");
+
+            string FighterPeram = GetSource(@"fighter_parem.lua");
+            string FighterGeneral = GetSource(@"fighter_general.lua") + "\n";            
+
+            foreach (string file in Files)
+            {
+                string name = Path.GetFileName(file).Split('.')[0];
+
+                string source = FileLoader.ReadWholeFile(file);
+
+                AnimationScripts.Add(name,new ScriptObject(FighterPeram +"\n"+ FighterGeneral + "if (anim.CurrentAnimationName == \"" + name + "\") then\n" + source + "\nend"));
+            }
+
+            if (FileLoader.DirectoryExists(@"custom\Scripts\"+Name+@"\Animation\"))
+            {
+                Files = FileLoader.GetFiles(@"custom\Scripts\" + Name + @"\Animation\");
+
+                foreach (string file in Files)
+                {
+                    string name = Path.GetFileName(file).Split('.')[0];
+
+                    string source = FileLoader.ReadWholeFile(file);
+
+                    if (AnimationScripts.ContainsKey(name))
+                        AnimationScripts.Remove(name);
+
+                    AnimationScripts.Add(name, new ScriptObject(FighterPeram + "\n" + FighterGeneral + "if (anim.CurrentAnimationName == \"" + name + "\") then\n" + source + "\nend"));
+                }
+            }
+        }
+
+        public Dictionary<string, ScriptObject> AnimationScripts { get; set; } 
 
         public override void Update()
         {
-            if (!MaterialTesting && !Dead)
+            SetUp();
+
+            if (Input.KS.GetKeyPressed(Key.F1))
             {
-                if (!setup)
-                    SetUp();
+                //LoadScripts();
 
-                input.Update();
+                Gdir = 1;
 
-                phy.Update();
+                RootNode.LocalPosition = new Vector3();
+                phy.Velocity = new Vector2(0);
 
-                if (!InHitStun && !Caught)
-                {
-                    FighterGeneral();
-
-                    FighterCollision();
-                }
-
-                RunAnimationPerams();
-
-                DamageMain();
-
-                AttackMain();
-
-                if (!Dead)
-                {
-                    DrawFighter();
-                }
-
-                FighterData.Update();
+                anim.CrossFade("wait1");
             }
 
-            anim.AnimationChange = false;
+            Input.Update();
 
-            UpdateParticals();
+            if (AnimationScripts.ContainsKey(anim.CurrentAnimationName))
+            {
+                AnimationScripts[anim.CurrentAnimationName].SetGlobal("fighter",this);
 
-            AccountCamera = true;
+                AnimationScripts[anim.CurrentAnimationName].Run();
+            }
 
-            DeathHandeling();
+            DamageMain();
+
+            phy.Update();
+
+            TurnCharecter();
+
+            foreach (Animator a in Animators)
+            {
+                a.Update();
+            }
+
+            Draw();            
         }
 
-        public void DeathHandeling()
+        public void TurnCharecter()
         {
-            if (Dead)
+            skeleton.RootNode.LocalRotation = Quaternion.FromAxisAngle(Vector3.UnitY, MathHelper.DegreesToRadians(90));
+
+            switch (TurnMode)
             {
-                RespawnTime -= FinalSpeed;
-
-                skeleton.RootNode.LocalPosition = new OpenTK.Vector3(0, 100, 0);
-
-                AccountCamera = false;
+                case 0: skeleton.RootNode.LocalRotation = Quaternion.FromAxisAngle(Vector3.UnitY, MathHelper.DegreesToRadians(90 * Gdir)); break;
+                case 1: skeleton.RootNode.LocalScale = new Vector3(1,1,Gdir); break;
             }
         }
 
-        public void FighterCollision()
+        public override void OnAnimationChange(Animator animator)
         {
-            ArenaScene arenaScene = (ArenaScene)Scene.CurrentScene;
+            base.OnAnimationChange(animator);
 
-            foreach (fighter f in arenaScene.Fighters)
+            if (animator == Animators[0])
             {
-                if (f != this && f.setup)
-                {
-                    if (f.phy.CollisionCapsule.TestCollision(phy.CollisionCapsule))
-                    {
-                        if (f.phy.Transform.LocalPosition.X < phy.Transform.LocalPosition.X)
-                        {
-                            //phy.MoveX(0.1f,2);
-                        }
-                        else
-                        {
-                            //phy.MoveX(-0.1f, 2);
-                        }
-                    }
-                }
+                InAttack = false;
+
+                HitboxQue = new Dictionary<Vector2, Interaction.Hitbox>();
+
+                foreach (Hitbox hbox in MyHitboxes)
+                    hbox.Destroy();
+
+                MyHitboxes = new List<Hitbox>();
             }
-        }
-
-        bool setup = false;
-        public virtual void SetUp()
-        {
-            if (Peram == null)
-            Peram = new FighterParam();
-
-            phy = new SimplePhysics(skeleton.RootNode,Peram);
-
-            phy.FighterRef = this;
-
-            setup = true;
-
-            input = new FighterInput(this);
-
-            Jumps = Peram.JumpCount;
-
-            foreach (Animator anim in Animators)
-            {
-                anim.fighterref = this;
-            }
-
-            phy.CollisionCapsule = new Physics.Shapes.Capsule2D(10,20);
-
-            FighterData = new FighterScreenData(this);
-        }
-
-        public void LoadPerams()
-        {
-
-        }
-
-        float CameraLock;
-
-        float RespawnTime;
-
-        public bool Dead => RespawnTime > 0;
-
-        public void Kill()
-        {
-            CreateKillParticals();
-
-            RespawnTime = 200;
-
-            InDamageFly = false;
-            skeleton.RootNode.LocalPosition = new OpenTK.Vector3(0,100,0);
-            Damage = 0;
-            phy.Velocity = new OpenTK.Vector2(0,0);
-            InHitStun = false;
         }
     }
 }

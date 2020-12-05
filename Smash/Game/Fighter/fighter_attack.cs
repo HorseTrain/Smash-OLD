@@ -1,6 +1,5 @@
-﻿using OpenTK.Graphics.ES11;
+﻿using OpenTK;
 using SimpleGameEngine.Graphics;
-using Smash.Game.Input;
 using Smash.Game.Interaction;
 using System;
 using System.Collections.Generic;
@@ -12,196 +11,190 @@ namespace Smash.Game.Fighter
 {
     public partial class fighter
     {
-        Dictionary<int,Hitbox[]> ExistingQue = new Dictionary<int, Hitbox[]>();
-        public bool DestroyAllHitBoxes { get; set; }
-        public bool InAttack { get; set; } = false;
-        bool Attacked { get; set; }
+        public bool InDamageFly;
+        public float DamageFlyDrag = 5;
 
-        public List<fighter>[] FighterHitExclusion;
+        public Dictionary<Vector2, Hitbox> HitboxQue { get; set; } = new Dictionary<Vector2, Hitbox>();
 
-        public void ResetExclusionQue()
+        public float HitLag;
+        public bool InHitLag => HitLag > 0;
+
+        public float GetDistance(float BKB, float Mult)
         {
-            FighterHitExclusion = new List<fighter>[100];
-
-            for (int i = 0; i < FighterHitExclusion.Length; i++)
-            {
-                FighterHitExclusion[i] = new List<fighter>();
-            }
+            return BKB + (Damage * Mult);
         }
 
-        public void AttackMain()
-        {            
-            if (anim.AnimationChange)
-            {
-                ResetExclusionQue();
-
-                ExistingQue = new Dictionary<int, Hitbox[]>();
-
-                //HitLayers = new HashSet<int>();
-
-                if (!Attacked)
-                {
-                    InAttack = false;
-                }
-            }
-
-            DestroyAllHitBoxes = anim.AnimationChange;
-
-            DetectAttacks();
-
-            Attacked = false;
-        }
-
-        ControllerDirection bufferedg;
-
-        float ckill = 3;
-
-        public void DetectAttacks()
+        public void DamageMain()
         {
-            ckill -= Window.MainWindow.GlobalDeltaTime;
-
-            if (ckill < 0)
-                bufferedg = ControllerDirection.Null;
-
-            if (!InAttack)
+            if (InHitLag)
             {
-                if (phy.Grounded)
+                InHitStun = true;
+
+                GeneralSpeed = 0;
+                hit.Object.GeneralSpeed = 0;
+
+                HitLag -= Window.MainWindow.GlobalDeltaTime;
+
+                InDamageFly = false;
+
+                if (!InHitLag)
                 {
-                    if (anim.CurrentAnimationName != "jumpsquat" && phy.Velocity.Y <= 0)
+                    GeneralSpeed = 1;
+                    hit.Object.GeneralSpeed = 1;
+
+                    Vector2 velocity = (hit.Position.Xy - RootNode.LocalPosition.Xy) / 10;
+
+                    float distance = GetDistance(hit.GetFloat("bkb"), hit.GetFloat("kbm"));
+
+                    if (distance < 5)
                     {
-                        if (bufferedg != ControllerDirection.Null)
+                        phy.Velocity.X = velocity.X;
+
+                        if (!hit.Object.phy.Grounded)
                         {
-                            if (input.Ydir.TapBuffered || input.Cdir.TapBuffered)
-                            {
-                                switch (bufferedg)
-                                {
-                                    case ControllerDirection.Up: AttackA("attackhi4"); break;
-                                    case ControllerDirection.Down: AttackA("attacklw4"); break;
-                                    case ControllerDirection.Forward: AttackA("attacks4s"); break;
-                                    case ControllerDirection.Back: AttackA("attacks4s"); Gdir *= -1; break;
-                                }
-                            }
-                            else
-                            {
-                                switch (bufferedg)
-                                {
-                                    case ControllerDirection.Neuteral: if (anim.CurrentAnimationName.Contains("turn")) Gdir *= -1; AttackA("attack11"); break;
-                                    case ControllerDirection.Up: AttackA("attackhi3"); break;
-                                    case ControllerDirection.Down: AttackA("attacklw3"); break;
-                                }
-
-                                if (bufferedg == ControllerDirection.Forward || bufferedg== ControllerDirection.Back)
-                                {
-                                    if (anim.CurrentAnimationName.Contains("dash") && anim.CurrentKeyIndex > 5)
-                                    {
-                                        AttackA("attackdash");
-
-                                        Gdir = input.Cdir;
-                                    }
-                                    else if (anim.CurrentAnimationName == "run")
-                                    {
-                                        AttackA("attackdash");
-                                    }
-                                    else
-                                    {
-                                        AttackA("attacks3s");
-                                    }
-                                }
-                            }
-                        }
-
-                        if (input.AButton.Buffered)
-                        {
-                            bufferedg = input.AttackController.Direction;
-
-                            input.AButton.EndBuffer();
-
-                            ckill = 5;
+                            phy.Velocity.Y = velocity.Y;
                         }
                     }
+                    else
+                    {
+                        Launch(hit.GetFloat("angle"), distance);
+                    }
                 }
-                else
-                {
-                    DetectAerial();
-                }
+            }
+
+            if (InDamageFly)
+            {
+                DamageFly();
             }
         }
 
-        public void CreateHitboxAtTime(int frame,Dictionary<string,object> Data,int ID,HitboxType Type = HitboxType.Attack,int HitboxLayer = -1)
+        public void Launch(float angle, float distance)
+        {
+            Vector2 vel = GetAngleVector(angle);
+
+            vel.X *= hit.Object.Gdir;
+
+            if (GetAngle(vel,Vector2.UnitY) < 10)
+            {
+                int rand = GetRandomInt(0,3);
+
+                switch (rand)
+                {
+                    case 0: anim.CrossFade("damageflytop"); break;
+                    case 1: anim.CrossFade("damageflyhi"); break;
+                    case 2: anim.CrossFade("damageflyroll"); break;
+                }
+            }
+            else
+            {
+                int rand = GetRandomInt(0, 2);
+
+                switch (rand)
+                {
+                    case 0: anim.CrossFade("damageflyn"); break;
+                    case 1: anim.CrossFade("damageflyroll"); break;
+                }
+            }
+
+            phy.Velocity = (vel * distance) / DamageFlyDrag;
+
+            Console.WriteLine(phy.Velocity);
+
+            InDamageFly = true;
+        }
+
+        public bool DamageFlyEnd
+        {
+            get
+            { 
+                bool Out = phy.Velocity.Length < (1f / (DamageFlyDrag * 0.2f));
+
+                if (Out)
+                {
+                    InDamageFly = false;
+                }
+
+                return Out;
+            }
+        }
+
+        public void DamageFly()
+        {
+            InHitStun = true;
+
+            phy.DoGravity = false;
+
+            phy.Velocity += (Vector2.Zero - phy.Velocity) / (DamageFlyDrag / FinalSpeed);
+
+            switch (anim.CurrentAnimationName)
+            {
+                case "damageflyn": anim.PauseInAnimation(15); break;
+                case "damageflytop": anim.PauseInAnimation(10); break;
+                case "damageflyhi": anim.PauseInAnimation(10); break;
+                case "damageflyroll": if (DamageFlyEnd) anim.CrossFade("damageflyrollend",100); break;
+            }
+
+            if (DamageFlyEnd)
+            {
+
+            }
+        }
+
+        public Vector2 GetAngleVector(float angle)
+        {
+            angle = MathHelper.DegreesToRadians(angle);
+
+            return new Vector2((float)Math.Sin(angle),(float)Math.Cos(angle));
+        }
+
+        public float GetAngle(Vector2 v0, Vector2 v1)
+        {
+            return (float)MathHelper.RadiansToDegrees(Math.Acos(Vector2.Dot(v0,v1)));
+        }
+
+        public void CreateHitBox(int frame, Dictionary<string,object> Data,int ID = 0,int Layer = -1)
         {
             if (anim.CurrentKeyIndex == frame)
             {
-                CreateHitbox(Data,ID,Type, HitboxLayer);
-            }
-        }
-
-        public Hitbox CreateHitbox(Dictionary<string,object> Data,int ID,HitboxType Type,int HLayer)
-        {
-            int frame = anim.CurrentKeyIndex;
-
-            if (!ExistingQue.ContainsKey(frame))
-            {
-                ExistingQue.Add(frame,new Hitbox[100]);
-            }
-
-            if (ExistingQue[frame][ID] == null)
-            {
-                Hitbox Out = new Hitbox();
-
-                Out.fRef = this;
-
-                Out.Data = Data;
-                Out.SetUp(Type, HLayer);
-
-                ExistingQue[frame][ID] = Out;
-            }
-
-            return ExistingQue[frame][ID];
-        }
-
-        public void EndAttack(int frame)
-        {
-            if (anim.CurrentKeyIndex >= frame)
-                InAttack = false;
-        }
-
-        public virtual void DetectAerial()
-        {
-            if (input.AttackController.Buffered)
-            {
-                switch (input.AttackController.Direction)
+                if (!HitboxQue.ContainsKey(new Vector2(frame,ID)))
                 {
-                    case ControllerDirection.Up: AttackA("attackairhi"); break;
-                    case ControllerDirection.Forward: AttackA("attackairf"); break;
-                    case ControllerDirection.Back: AttackA("attackairb"); break;
-                    case ControllerDirection.Down: AttackA("attackairlw"); break;
-                    case ControllerDirection.Neuteral: AttackA("attackairn"); break;
+                    if (Layer == -1)
+                        Layer = ID;
+
+                    HitboxQue.Add(new Vector2(frame,ID),CreateHitbox(Data,Layer));
                 }
             }
         }
 
-        public void ComboAttack(int frame, string name)
+        public Hitbox CreateHitbox(Dictionary<string, object> Data,int layer)
         {
-            if (input.AButton.Buffered && anim.CurrentKey >= frame) 
+            return new Hitbox()
             {
-                AttackA(name,true);
+                Object = this,
+                Data = Data,
+                Layer = layer
+            };
+        }
+
+        public Hitbox hit;
+
+        public void Hit(Hitbox hitbox)
+        {
+            this.hit = hitbox;
+
+            HitLag = hitbox.GetInt("hitlag");
+
+            if (HitLag == 0)
+                HitLag = 1;
+
+            if (phy.Grounded)
+            {
+                anim.CrossFade("damagen" + GetRandomInt(1,4));
             }
-        }
-
-        public void DamageN()
-        {
-            WhenFinishedGoTo("wait1");
-
-            phy.MoveX(0,5);
-        }
-
-        public void GroundAttack(string endname = "wait1")
-        {
-            WhenFinishedGoTo(endname);
-
-            phy.Velocity.X = anim.MovementX * Gdir;
-
-            phy.HugLedge();
+            else
+            {
+                anim.CrossFade("damageair" + GetRandomInt(1, 4));
+            }
         }
     }
 }

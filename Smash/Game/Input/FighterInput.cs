@@ -1,4 +1,5 @@
-﻿using OpenTK;
+﻿using MoonSharp.Interpreter;
+using OpenTK;
 using OpenTK.Input;
 using SimpleGameEngine.Graphics;
 using Smash.Game.Fighter;
@@ -24,10 +25,70 @@ namespace Smash.Game.Input
         Null
     }
 
+    public enum CstickMode
+    {
+        Attack,
+        Smash,
+        Special
+    }
+
+    [MoonSharpUserData]
+    public class MultiButtonSet
+    {
+        public bool Buffered;
+        public bool Pressed;
+        public bool Down;
+        public bool Released;
+
+        Button[] buttons;
+
+        public MultiButtonSet(Button[] Buttons)
+        {
+            buttons = Buttons;
+
+            foreach (Button button in Buttons)
+            {
+                if (button.Buffered)
+                {
+                    Buffered = true;
+                }
+
+                if (button.Pressed)
+                {
+                    Pressed = true;
+                }
+
+                if (button.Down)
+                {
+                    Down = true;
+                }
+
+                if (button.Released)
+                {
+                    Released = true;
+                }
+            }
+        }
+
+        public void EndBuffer()
+        {
+            foreach (Button button in buttons)
+            {
+                button.EndBuffer();
+            }
+        }
+
+        public void VBuffer()
+        {
+            Buffered = true;
+        }
+    }
+
+    [MoonSharpUserData]
     public class FighterInput
     {
         public const int BufferWindow = 10;
-        public ControllerMode mode { get; set; } = ControllerMode.Controller;
+        public ControllerMode mode { get; set; } = ControllerMode.Keyboard;
         public KeyboardController KS { get; set; }
         public JoystickInput JS { get; set; }
         public fighter fighterref { get; set; }
@@ -39,25 +100,29 @@ namespace Smash.Game.Input
         public InputAxis Ydir => Axis[1];
         public Stick MovementStick { get; set; }
         public Stick CStick { get; set; }
-        public Button JumpButton => Inputs[0];
-        public Button AButton => Inputs[1];
-        public Button BButton => Inputs[2];
-        public Button CatchButton => Inputs[3];
+        public MultiButtonSet JumpButton => new MultiButtonSet(new Button[] { Inputs[0], Inputs[4] });
+        public MultiButtonSet AButton => new MultiButtonSet(new Button[] { Inputs[1] });
+        public MultiButtonSet BButton => new MultiButtonSet(new Button[] { Inputs[2] });
+        public MultiButtonSet CatchButton => new MultiButtonSet(new Button[] { Inputs[3] });
+        public CstickMode cStickMode { get; set; } = CstickMode.Attack;
 
-        public AttackBuffer AttackController { get; set; } = new AttackBuffer();
-        public AttackBuffer SpecialController { get; set; } = new AttackBuffer();
+        public AttackBuffer AttackControllerA { get; set; } = new AttackBuffer();
+        public AttackBuffer AttackControllerB { get; set; } = new AttackBuffer();
 
         public FighterInput(fighter fref)
         {
             fighterref = fref;
 
-            JS = new JoystickInput(fref.FighterIndex);
+            JS = new JoystickInput(fref.Index);
             KS = new KeyboardController();
 
-            Inputs.Add(new Button(Key.LShift,6));
+            Inputs.Add(new Button(Key.Space,6)); // Jump
+
             Inputs.Add(new Button(Key.Z, 1));
             Inputs.Add(new Button(Key.X, 2));
             Inputs.Add(new Button(Key.C,5 ));
+
+            Inputs.Add(new Button(Key.LShift, 3)); // Jump1
 
             Axis.Add(new InputAxis(Key.Left,Key.Right,0));
             Axis.Add(new InputAxis(Key.Down, Key.Up, 1,true));
@@ -71,11 +136,11 @@ namespace Smash.Game.Input
 
         public void Update()
         {
-            if (fighterref.FighterIndex == 0)
-            {
-                KS.Update();
-                JS.Update();
+            KS.Update();
+            JS.Update();
 
+            if (fighterref.Index == 0)
+            {
                 if (KS.IsAnyKeyDown())
                     mode = ControllerMode.Keyboard;
 
@@ -97,8 +162,12 @@ namespace Smash.Game.Input
 
                 DetectAttack();
 
-                AttackController.Update();
-                SpecialController.Update();
+                AttackControllerA.Update();
+                AttackControllerB.Update();
+            }
+            else
+            {
+                
             }
         }
 
@@ -106,9 +175,21 @@ namespace Smash.Game.Input
         {
             if (AButton.Buffered)
             {
-                AttackController.BufferAttack(MovementStick.AttackDirection);
+                AttackControllerA.BufferAttack(MovementStick.AttackDirection);
 
                 AButton.EndBuffer();
+            }
+
+            if (BButton.Buffered)
+            {
+                AttackControllerB.BufferAttack(MovementStick.AttackDirection);
+
+                BButton.EndBuffer();
+            }
+
+            if (CStick.SlowTapped)
+            {
+                AttackControllerA.BufferAttack(CStick.AttackDirection);
             }
         }
 
@@ -124,6 +205,7 @@ namespace Smash.Game.Input
         }
     }
 
+    [MoonSharpUserData]
     public class Button
     {
         public Key keyboardKey { get; set; }
@@ -165,14 +247,17 @@ namespace Smash.Game.Input
         public bool Buffered { get; set; }
     }
 
+    [MoonSharpUserData]
     public class InputAxis
     {
+        float LastValue { get; set; }
         public float Value { get; private set; }
         public int Dir { get; private set; }
         public bool Tapped { get; private set; }
         public bool Released { get; private set; } = true;
         public int Ldir { get; private set; }
         public bool TapBuffered => TapBuffer > 0;
+        public bool SlowTap { get;private set; }
         float TapBuffer { get; set; }
 
         Key l, r;
@@ -233,6 +318,10 @@ namespace Smash.Game.Input
 
             if (Tapped)
                 TapBuffer = 5;
+
+            SlowTap = (Math.Abs(LastValue) <= 0.5f && Math.Abs(Value) > 0.5f);
+
+            LastValue = Value;
         }
 
         public static implicit operator int(InputAxis axis)
@@ -241,13 +330,14 @@ namespace Smash.Game.Input
         }
     }
 
+    [MoonSharpUserData]
     public class Stick
     {
         public InputAxis x { get; private set; }
         public InputAxis y { get; private set; }
         public bool Relesaed { get; private set; }
         bool checkrelease { get; set; }
-
+        public bool SlowTapped => x.SlowTap || y.SlowTap;
         public bool CanUse { get; set; }
 
         int Gdir { get; set; }
@@ -328,10 +418,11 @@ namespace Smash.Game.Input
         }
     }
 
+    [MoonSharpUserData]
     public class AttackBuffer
     {
         public float BufferLocation { get; private set; }
-        public ControllerDirection Direction { get; set; }
+        public int Direction { get; set; }
 
         public void Update()
         {
@@ -343,7 +434,7 @@ namespace Smash.Game.Input
         public void BufferAttack(ControllerDirection dir)
         {
             BufferLocation = FighterInput.BufferWindow;
-            Direction = dir;
+            Direction = (int)dir;
         }
 
         public void KillBuffer()

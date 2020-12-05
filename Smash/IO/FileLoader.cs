@@ -65,5 +65,10 @@ namespace Smash.IO
         {
             return File.ReadAllText(GetPath(path));
         }
+
+        public static bool DirectoryExists(string path)
+        {
+            return Directory.Exists(GetPath(path));
+        }
     }
 }

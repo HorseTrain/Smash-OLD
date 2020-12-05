@@ -62,6 +62,9 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MoonSharp.Interpreter, Version=2.0.0.0, Culture=neutral, PublicKeyToken=921e73ce94aa17f8, processorArchitecture=MSIL">
+      <HintPath>..\packages\MoonSharp.2.0.0.0\lib\net40-client\MoonSharp.Interpreter.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK, Version=3.2.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.3.2\lib\net20\OpenTK.dll</HintPath>
     </Reference>
@@ -78,29 +81,12 @@
   <ItemGroup>
     <Compile Include="Game\Debug\GameStats.cs" />
     <Compile Include="Game\Fighter\fighter.cs" />
-    <Compile Include="Game\Fighter\FighterPeram.cs" />
-    <Compile Include="Game\Fighter\FighterScreenData.cs" />
     <Compile Include="Game\Fighter\fighter_attack.cs" />
-    <Compile Include="Game\Fighter\fighter_damage.cs" />
-    <Compile Include="Game\Fighter\fighter_draw.cs" />
-    <Compile Include="Game\Fighter\fighter_generic.cs" />
-    <Compile Include="Game\Fighter\fighter_particals.cs" />
-    <Compile Include="Game\Fighter\fighter_scripts.cs" />
-    <Compile Include="Game\Fighter\fighter_s\fox.cs" />
-    <Compile Include="Game\Fighter\fighter_s\ike.cs" />
-    <Compile Include="Game\Fighter\fighter_s\kirby.cs" />
-    <Compile Include="Game\Fighter\fighter_s\mario.cs" />
-    <Compile Include="Game\Fighter\fighter_s\pit.cs" />
-    <Compile Include="Game\Fighter\fighter_s\roy.cs" />
-    <Compile Include="Game\Fighter\fighter_s\tantan.cs" />
-    <Compile Include="Game\Fighter\Particals\CircleTravelPartical.cs" />
-    <Compile Include="Game\Fighter\Particals\DamageFlyPartical.cs" />
-    <Compile Include="Game\Fighter\Particals\JumpPartical.cs" />
-    <Compile Include="Game\Fighter\Particals\MoveDirPartical.cs" />
-    <Compile Include="Game\Fighter\Particals\RunPartical.cs" />
+    <Compile Include="Game\Fighter\fighter_parem.cs" />
     <Compile Include="Game\Input\ControllerAxis.cs" />
     <Compile Include="Game\Input\FighterInput.cs" />
     <Compile Include="Game\Input\JoystickInput.cs" />
+    <Compile Include="Game\Input\KBWrapper.cs" />
     <Compile Include="Game\Input\KeyboardController.cs" />
     <Compile Include="Game\Interaction\Hitbox.cs" />
     <Compile Include="Game\Physics\Shapes\Capsule2D.cs" />
@@ -115,8 +101,9 @@
     <Compile Include="Game\Scenes\ArenaScenes.cs" />
     <Compile Include="Game\Physics\SimplePhysics.cs" />
     <Compile Include="Game\Scenes\Ledge.cs" />
-    <Compile Include="Game\Scenes\MatLabs.cs" />
+    <Compile Include="Game\ScriptObject.cs" />
     <Compile Include="Game\SmashMath.cs" />
+    <Compile Include="Game\Sound\SoundDevice.cs" />
     <Compile Include="Game\Stages\Training\TrainingBack.cs" />
     <Compile Include="Game\UI\Button.cs" />
     <Compile Include="Game\UI\MenuScene.cs" />

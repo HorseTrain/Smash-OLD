@@ -200,6 +200,8 @@ namespace Smash.IO
                 }
             }
 
+            Out.RootNode.Name = "Nigga";
+
             Out.SetIdentities();
 
             return Out;
@@ -226,9 +228,16 @@ namespace Smash.IO
 
         public static RenderTexture2D LoadTexture(byte[] Data)
         {
-            RenderTexture2D Out = new RenderTexture2D(BitmapFromBuffer(Data));
+            if (CheckFileMagic("CTEXT",Data))
+            {
+                RenderTexture2D Out = new RenderTexture2D(BitmapFromBuffer(Data));
 
-            return Out;
+                return Out;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public unsafe static RenderTexture2D LoadRawTexture(byte[] Data)
@@ -253,6 +262,17 @@ namespace Smash.IO
 
                 return Out;
             }
+        }
+
+        public static bool CheckFileMagic(string check,byte[] Data)
+        {
+            for (int i = 0; i < check.Length; i++)
+            {
+                if ((char)Data[i] != check[i])
+                    return false;
+            }
+
+            return true;
         }
 
         public static RenderTexture3D CubemapFromName(string name)
@@ -315,7 +335,7 @@ namespace Smash.IO
             return *(T*)&data;
         }
 
-        public static Animator LoadAnimationCollection(string root)
+        public static Animator LoadAnimationCollection(string root,SceneObject fref)
         {
             string[] files = FileLoader.GetFiles(FileLoader.RootPath + root);
 
@@ -336,6 +356,8 @@ namespace Smash.IO
                 }
             }
 
+            Out.fref = fref;
+
             return Out;
         }
 
@@ -343,7 +365,7 @@ namespace Smash.IO
         {
             Animator Out = new Animator();
 
-            Out.fighterref = anim.fighterref;
+            Out.fref = anim.fref;
 
             Out.Animations = anim.Animations;
 

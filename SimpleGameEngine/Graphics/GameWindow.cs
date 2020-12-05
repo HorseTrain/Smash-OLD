@@ -1,5 +1,7 @@
 ﻿using OpenTK;
+using OpenTK.Audio.OpenAL;
 using OpenTK.Graphics.OpenGL;
+using SimpleGameEngine.Audio;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -21,11 +23,19 @@ namespace SimpleGameEngine.Graphics
         public double FrameRate { get; private set; }
         double DeltaTime { get; set; }
         public static Random GlobalRNG = new Random();
-
-        public float GlobalDeltaTime => (float)DeltaTime;
-
-        public int TargetFramerate { get; set; } = 60;
+        public float GlobalDeltaTime
+        {
+            get
+            {
+                if (DeltaTime < 1)
+                    return (float)DeltaTime;
+                else
+                    return 1;
+            }
+        }
+        public float TargetFramerate { get; set; } = 60;
         long WaitTime { get; set; }
+        public ALContext MainSoundContext { get; set; }
         
         public Window()
         {
@@ -34,11 +44,13 @@ namespace SimpleGameEngine.Graphics
             Time = new Stopwatch();
         }
 
-        public void SetUp(int width, int height)
+        public unsafe void SetUp(int width, int height)
         {
             window = new GameWindow(width,height);
 
             window.RenderFrame += Update;
+
+            MainSoundContext = new ALContext(true);
 
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
@@ -49,9 +61,11 @@ namespace SimpleGameEngine.Graphics
 
             Start();
 
-            window.Run(1d/60d);
+            window.Run();
 
             Active = false;
+
+            MainSoundContext.DestroyContext();
         }
 
         public virtual void Start()

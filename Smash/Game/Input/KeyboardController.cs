@@ -1,4 +1,5 @@
-﻿using OpenTK.Input;
+﻿using MoonSharp.Interpreter;
+using OpenTK.Input;
 using SimpleGameEngine.Graphics;
 using System;
 using System.Collections.Generic;
@@ -8,10 +9,11 @@ using System.Threading.Tasks;
 
 namespace Smash.Game.Input
 {
+    [MoonSharpUserData]
     public class KeyboardController
     {
-        public KeyboardState LastState { get; set; }
-        public KeyboardState State { get; set; }
+        public KBWrapper LastState { get; set; } = new KBWrapper(default);
+        public KBWrapper State { get; set; } = new KBWrapper(default);
         public float[] Buffers { get; set; }
 
         public KeyboardController()
@@ -22,7 +24,7 @@ namespace Smash.Game.Input
         public void Update()
         {
             LastState = State;
-            State = Keyboard.GetState();
+            State = new KBWrapper(Keyboard.GetState());
 
             for (int i = 0; i < 132; i++)
             {

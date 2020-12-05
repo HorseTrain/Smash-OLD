@@ -46,9 +46,19 @@ namespace Exporter
     {
         public static void Main(string[] Args)
         {
-            BatchExportShaders(@"D:\Programming\Projects\Assets\fighter\Shaders\", @"D:\Programming\SmashAssets\custom\");
+            if (Args != null)
+            {
+                if (Args.Length == 0)
+                {
+                    BatchExportShaders(@"D:\Programming\Projects\Assets\fighter\Shaders\", @"D:\Programming\SmashAssets\custom\");
 
-            BatchExportShaders(@"D:\Programming\Projects\Assets\fighter\Shaders\", @"C:\Users\Raymond\source\repos\Smash\Smash\bin\Debug\Assets\custom\");
+                    BatchExportShaders(@"D:\Programming\Projects\Assets\fighter\Shaders\", @"C:\Users\Raymond\source\repos\Smash\Smash\bin\Debug\Assets\custom\");
+                }
+                else
+                {
+                    BatchExportFile(Args[0],Args[1]);
+                }
+            }
 
             // BatchExportCubeMaps(@"D:\Programming\Projects\Assets\fighter\Maps\", @"D:\Programming\SmashAssets\custom\CubeMaps\");
 
@@ -102,55 +112,40 @@ namespace Exporter
             }
         }
 
-        public static void BatchExportFile(string dir,string converts,string Out)
+        public static void BatchExportFile(string dir,string Out)
         {
-            StreamReader convreader = new StreamReader(converts);
+            if (!Out.EndsWith("\\"))
+                Out += "\\";
 
-            string line = convreader.ReadLine();
+            Folder temp = new Folder(dir);
 
-            while (line != null)
+            foreach (string folder in Folder.outs)
             {
-                string path = line.Split(' ')[0].Replace("root/","");
-                string type = line.Split(' ')[1];
+                string[] files = Directory.GetFiles(folder);
 
-                Directory.CreateDirectory(Out + Path.GetDirectoryName(path));
-
-                if (!File.Exists(Out + path))
+                foreach (string file in files)
                 {
-                    if (type == "uns")
-                    {
-                        File.Copy(dir + path, Out + path);
-                    }
-                    else if (type == "anim")
-                    {
-                        MINA anim = (MINA)IParsable.FromFile(dir + path);
+                    string odir = Out + SplitString(dir.Length,file);
 
-                        File.WriteAllBytes(Out + path, ExportAnimation(anim).FinalBuffer());
-                    }
-                    else if (type == "text")
+                    Directory.CreateDirectory(Path.GetDirectoryName(odir));
+
+                    if (file.EndsWith(".nutexb"))
                     {
-                        try
-                        {
-                            File.WriteAllBytes(Out + path, ExportTexture(dir + path).FinalBuffer());
-                        }
-                        catch
-                        {
-
-                        }
+                        ExportTexture(NUTEXTB.TextureLoader.LoadNUTEXTB(file)).Export(odir);
                     }
+                    else if (file.EndsWith(".nuanmb"))
+                    {
+                        ExportAnimation((MINA)IParsable.FromFile(file)).Export(odir);
+                    }
+                    else
+                    {
+                        if (File.Exists(odir))
+                            File.Delete(odir);
 
-                    Console.WriteLine("Exported " + Out + path);
+                        File.Copy(file, odir);
+                    }
                 }
-                else
-                {
-                    Console.WriteLine("AlreadyExported " + Out + path);
-                }
-               
-
-                line = convreader.ReadLine();
             }
-
-            convreader.Close();
         }
 
         public static string SplitString(int index, string source)

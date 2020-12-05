@@ -1,6 +1,8 @@
-﻿using OpenTK;
+﻿using MoonSharp.Interpreter;
+using OpenTK;
 using SimpleGameEngine.Graphics;
 using SimpleGameEngine.Graphics.Assets;
+using Smash.Game;
 using Smash.Game.Fighter;
 using Smash.Game.Scenes;
 using System;
@@ -11,27 +13,29 @@ using System.Threading.Tasks;
 
 namespace Smash.GraphicWrangler
 {
+    [MoonSharpUserData]
     public class Animator
     {
         public string CurrentAnimationName { get; private set; } = "";
         public Dictionary<string, RenderAnimation> Animations { get; set; } = new Dictionary<string, RenderAnimation>();
-        RenderAnimation currentanimation
+        public RenderAnimation currentanimation
         {
             get
             {
-                if (Animations.ContainsKey(CurrentAnimationName))
+                if (CurrentAnimationName != null)
                 {
-                    return Animations[CurrentAnimationName];
+                    if (Animations.ContainsKey(CurrentAnimationName))
+                    {
+                        return Animations[CurrentAnimationName];
+                    }
                 }
-                else
-                {
-                    return null;
-                }
+
+                return null;
             }
         }
-        public fighter fighterref { get; set; }
+        public SceneObject fref { get; set; }
         public float AnimationSpeed { get; set; } = 1;
-        public float FinalSpeed => fighterref.FinalSpeed * AnimationSpeed;
+        public float FinalSpeed => fref.FinalSpeed * AnimationSpeed;
         public bool FinishedAnimation { get; private set; }
         public bool LerpedAnimation { get; private set; }
         public float CurrentKey { get; set; } 
@@ -39,7 +43,7 @@ namespace Smash.GraphicWrangler
         public int CurrentKeyIndex => (int)CurrentKey;
         public float MovementX { get; set; }
         public float MovementY { get; set; }
-        public bool AnimationChange { get; set; }
+        public char AnimationNameEnd => CurrentAnimationName[CurrentAnimationName.Length - 1];
         public Animator()
         {
 
@@ -74,7 +78,7 @@ namespace Smash.GraphicWrangler
                 {
                     if (CurrentKeyIndex < node.FrameCount)
                     {
-                        TransformNode Bone = fighterref.Model.Skeleton.GetNode(node.Name);
+                        TransformNode Bone = fref.Model.Skeleton.GetNode(node.Name);
 
                         if (Bone != null && !AnimationOverides.Contains(node.Name))
                         {
@@ -107,9 +111,9 @@ namespace Smash.GraphicWrangler
                 {
                     if (CurrentKeyIndex < node.FrameCount)
                     {
-                        if (fighterref.Model.RenderKeys.ContainsKey(node.Name))
+                        if (fref.Model.RenderKeys.ContainsKey(node.Name))
                         {
-                            List<SkinnedMeshRenderer> renderers = fighterref.Model.RenderKeys[node.Name];
+                            List<SkinnedMeshRenderer> renderers = fref.Model.RenderKeys[node.Name];
 
                             foreach (SkinnedMeshRenderer renderer in renderers)
                             {
@@ -133,14 +137,14 @@ namespace Smash.GraphicWrangler
 
                 FinishedAnimation = false;
 
-                AnimationChange = true;
+                fref.OnAnimationChange(this);
             }
 
             if (!(CurrentKeyIndex < currentanimation.FrameCount))
             {
                 FinishedAnimation = true;
 
-                fighterref.skeleton.SetIdentities();
+                fref.skeleton.SetIdentities();
             }
 
             LerpedAnimation = false;
@@ -186,25 +190,31 @@ namespace Smash.GraphicWrangler
 
         public void CrossFade(string Name,int CrossTime = 0, bool force = false,bool reset = true)
         {
-            if (Name != CurrentAnimationName || force)
+            if (Name != null)
             {
-                CurrentAnimationName = Name;
-
-                LerpEnd = CrossTime;
-
-                if (reset)
+                if (Name != CurrentAnimationName || force)
                 {
-                    CurrentKey = 0;
-                    LerpPosition = 0;
-                }
+                    CurrentAnimationName = Name;
 
-                LerpedAnimation = true;
-                AnimationChange = true;
+                    LerpEnd = CrossTime;
 
-                if (fighterref != null)
-                if (CrossTime == 0)
-                {
-                    //fighterref.skeleton.IdentitySkeleton();
+                    if (reset)
+                    {
+                        CurrentKey = 0;
+                        LerpPosition = 0;
+                    }
+
+                    LerpedAnimation = true;
+
+                    fref.OnAnimationChange(this);
+
+                    if (fref != null)
+                    {
+                        if (CrossTime == 0)
+                        {
+                            //fighterref.skeleton.IdentitySkeleton();
+                        }
+                    }
                 }
             }
         }
@@ -221,10 +231,22 @@ namespace Smash.GraphicWrangler
             return Out.Replace('+','_');
         }
 
-        public void PauseInAnimation(int index)
+        public bool PauseInAnimation(int index)
         {
+            bool Out = false;
+
             if (CurrentKeyIndex >= index)
+            {
                 CurrentKey = index;
+                Out = true;
+            }
+
+            return Out;
+        }
+
+        public void Reset()
+        {
+            CurrentKey = 0;
         }
     }
 }

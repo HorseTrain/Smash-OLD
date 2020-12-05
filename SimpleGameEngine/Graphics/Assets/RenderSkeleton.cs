@@ -127,10 +127,7 @@ namespace SimpleGameEngine.Graphics.Assets
         public CullFaceMode CullMode { get; set; }
         public RenderSkeleton()
         {
-            RootNode = new TransformNode();
-            RootNode.Name = "RootNode";
 
-            RootNode.LocalRotation = Quaternion.FromAxisAngle(Vector3.UnitY, MathHelper.DegreesToRadians(-90));
         }
 
         public void SetIdentities()

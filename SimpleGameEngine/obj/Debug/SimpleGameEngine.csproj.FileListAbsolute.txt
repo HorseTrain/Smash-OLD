@@ -38,3 +38,6 @@ D:\Programming\Smash\SimpleGameEngine\obj\Debug\SimpleGameEngine.csproj.CoreComp
 D:\Programming\Smash\SimpleGameEngine\obj\Debug\SimpleGameEngine.csproj.CopyComplete
 D:\Programming\Smash\SimpleGameEngine\obj\Debug\SimpleGameEngine.dll
 D:\Programming\Smash\SimpleGameEngine\obj\Debug\SimpleGameEngine.pdb
+D:\Programming\Smash\SimpleGameEngine\bin\Debug\MoonSharp.Interpreter.dll
+D:\Programming\Smash\SimpleGameEngine\bin\Debug\MoonSharp.Interpreter.pdb
+D:\Programming\Smash\SimpleGameEngine\bin\Debug\MoonSharp.Interpreter.xml

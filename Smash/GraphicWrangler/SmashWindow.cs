@@ -10,6 +10,8 @@ using Smash.Game;
 using Smash.Game.Scenes;
 using Smash.Game.UI;
 using Smash.Game.Debug;
+using SimpleGameEngine.Audio;
+using Smash.Game.Sound;
 
 namespace Smash.GraphicWrangler
 {
@@ -21,9 +23,9 @@ namespace Smash.GraphicWrangler
         {
             Parsers.LoadAllShaders();
 
-            CurrentScene = new ArenaScene();
+            SoundDevice.LoadSoundCollection(@"custom\Sounds\General Sounds");
 
-            //((MenuScene)CurrentScene).Buttons.Add(new Button());
+            CurrentScene = new ArenaScene();
         }
 
         public override void Update(object obj, FrameEventArgs args)

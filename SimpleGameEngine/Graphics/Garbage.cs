@@ -8,6 +8,7 @@ namespace SimpleGameEngine.Graphics
 {
     public class Garbage
     {
+        
         public static List<Garbage> GarbageCollection = new List<Garbage>();
 
         public static void CollectTrash()

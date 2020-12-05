@@ -1,6 +1,7 @@
 ﻿using SmashLabs.Tools.Exporter;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -140,6 +141,11 @@ namespace SmashLabs.Tools.Exporters
 
             AddPointer(pointerlocation, datalocation);
             datalocation.AddString(str, pad);
+        }
+
+        public void Export(string path)
+        {
+            File.WriteAllBytes(path,FinalBuffer());
         }
     }
 }

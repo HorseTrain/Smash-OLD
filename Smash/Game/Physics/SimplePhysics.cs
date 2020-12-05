@@ -1,4 +1,5 @@
-﻿using OpenTK;
+﻿using MoonSharp.Interpreter;
+using OpenTK;
 using SimpleGameEngine.Graphics;
 using SimpleGameEngine.Graphics.Assets;
 using SimpleGameEngine.Graphics.Structs;
@@ -17,16 +18,15 @@ using System.Threading.Tasks;
 
 namespace Smash.Game.Physics
 {
+    [MoonSharpUserData]
     public class SimplePhysics
     {
         public static List<Line2D> SceneGeomatry { get; set; } = new List<Line2D>();
 
-        public SimplePhysics(TransformNode transform,FighterParam peram)
+        public SimplePhysics(SceneObject Object)
         {
-            Transform = transform;
-
-            FallSpeed = peram.FallSpeed;
-            TerminalVelocity = peram.TermenalVelocity;
+            Transform = Object.RootNode;
+            ObjectRef = Object;
 
             CollisionCapsule = new Capsule2D(10,20);
         }
@@ -34,9 +34,9 @@ namespace Smash.Game.Physics
         public TransformNode Transform { get; set; }
 
         public Vector2 Velocity;
-        public float FallSpeed { get; set; } = 0.081f;
-        public float TerminalVelocity { get; set; } = 3;
-        public bool Grounded { get; private set; }
+        public float FallSpeed { get; set; } = 0.01f;
+        public float TerminalVelocity { get; set; } = 1;
+        public bool Grounded { get; private set; } = true;
         public bool DoGravity { get; set; }
         public bool LeftRightCollision { get; set; }
         public bool TopDownCollision { get; set; }
@@ -44,12 +44,12 @@ namespace Smash.Game.Physics
         public bool HitTop { get; set; }
         public bool HitDown { get; set; }
 
-        public float ECBWidth { get; set; } = 10;
-        public float ECBHeight { get; set; } = 15;
+        public float ECBWidth { get; set; } = 5;
+        public float ECBHeight { get; set; } = 5;
 
         public bool GroundStateChange { get; private set; }
         bool lg;
-        public fighter FighterRef { get; set; }
+        public SceneObject ObjectRef { get; set; }
 
         List<Line2D> ECBLineList { get; set; }
 
@@ -71,7 +71,7 @@ namespace Smash.Game.Physics
 
         public virtual void Gravity()
         {
-            Velocity.Y -= FallSpeed * FighterRef.FinalSpeed;
+            Velocity.Y -= FallSpeed * ObjectRef.FinalSpeed;
 
             if (Velocity.Y <= -TerminalVelocity)
             {
@@ -102,7 +102,7 @@ namespace Smash.Game.Physics
 
         public void GroundCollision()
         {
-            LineIntersection2D groundtest = GlobalIntersectionTest(new Line2D(Transform.LocalPosition.Xy + new Vector2(0, ECBHeight / 2),Transform.LocalPosition.Xy + new Vector2(0,Velocity.Y)));
+            LineIntersection2D groundtest = GlobalIntersectionTest(new Line2D(Transform.LocalPosition.Xy + new Vector2(0, ECBHeight / 2),Transform.LocalPosition.Xy + new Vector2(0,Velocity.Y * ObjectRef.FinalSpeed)));
 
             Grounded = false;
 
@@ -187,22 +187,22 @@ namespace Smash.Game.Physics
 
         public void MoveX(float speed,float lerp = 1)
         {
-            Velocity.X += (speed - Velocity.X) / (lerp / (float)FighterRef.FinalSpeed);
+            Velocity.X += (speed - Velocity.X) / (lerp / (float)ObjectRef.FinalSpeed);
         }
 
         public void MoveY(float speed, float lerp = 1)
         {
-            Velocity.Y += (speed - Velocity.Y) / (lerp / (float)FighterRef.FinalSpeed);
+            Velocity.Y += (speed - Velocity.Y) / (lerp / (float)ObjectRef.FinalSpeed);
         }
 
         public void Move(Vector2 vel, float lerp = 1)
         {
-            Velocity += (vel - Velocity) / (lerp / (float)FighterRef.FinalSpeed);
+            Velocity += (vel - Velocity) / (lerp / (float)ObjectRef.FinalSpeed);
         }
 
         public void Init()
         {
-            Transform.LocalPosition += new Vector3(Velocity.X, Velocity.Y, 0) * FighterRef.FinalSpeed;
+            Transform.LocalPosition += new Vector3(Velocity.X, Velocity.Y, 0) * ObjectRef.FinalSpeed;
         }
 
         public static LineIntersection2D GlobalIntersectionTest(Line2D line)
@@ -295,7 +295,7 @@ namespace Smash.Game.Physics
             }
         }
 
-        public bool Ottotto => !GlobalIntersectionTest(new Line2D(Transform.LocalPosition.Xy + new Vector2(FighterRef.Gdir * 2, 1), Transform.LocalPosition.Xy + new Vector2(FighterRef.Gdir * 2, -0.1f))).Valid;
+        public bool Ottotto => !GlobalIntersectionTest(new Line2D(Transform.LocalPosition.Xy + new Vector2(ObjectRef.Gdir * 2, 1), Transform.LocalPosition.Xy + new Vector2(ObjectRef.Gdir * 2, -0.1f))).Valid;
 
         public void HugLedge()
         {
@@ -320,6 +320,31 @@ namespace Smash.Game.Physics
             }
 
             return Out;
+        }
+
+        public void SetVelocity(float x, float y)
+        {
+            Velocity = new Vector2(x,y);
+        }
+
+        public void SetVelX(float val)
+        {
+            Velocity.X = val;
+        }
+
+        public float GetVelX()
+        {
+            return Velocity.X;
+        }
+
+        public void SetVelY(float val)
+        {
+            Velocity.Y = val;
+        }
+
+        public float GetVelY()
+        {
+            return Velocity.Y;
         }
     }
 }
